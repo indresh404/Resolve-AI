@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ThinkingOrb } from './ThinkingOrbWrapper';
 import { 
   Brain, 
   User, 
@@ -19,8 +20,8 @@ export default function CogneeMemoryGraph({ theme }) {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-neutral-200 dark:border-neutral-800">
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-black text-[#00B9F1] dark:bg-white dark:text-black text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/40">
-              <Brain className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/30">
+              <Brain className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1]" />
               Graph Memory
             </div>
             <h2 className="text-2xl font-black text-black dark:text-white">
@@ -43,15 +44,15 @@ export default function CogneeMemoryGraph({ theme }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-4">
           
           {/* Left: Visual Graph Canvas */}
-          <div className="lg:col-span-8 rounded-2xl bg-black border-2 border-neutral-800 p-4 relative overflow-hidden min-h-[300px] flex items-center justify-center shadow-inner">
+          <div className="lg:col-span-8 rounded-2xl bg-neutral-50 dark:bg-black border-2 border-neutral-200 dark:border-neutral-800 p-4 relative overflow-hidden min-h-[300px] flex items-center justify-center shadow-inner">
             
             {/* SVG Connecting Links */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none stroke-neutral-700 stroke-2">
+            <svg className="absolute inset-0 w-full h-full pointer-events-none stroke-neutral-300 dark:stroke-neutral-700 stroke-2">
               <line x1="50%" y1="50%" x2="20%" y2="25%" stroke="#00B9F1" strokeWidth="2" strokeDasharray="4,4" />
-              <line x1="50%" y1="50%" x2="80%" y2="25%" stroke="#FFFFFF" strokeWidth="1.5" />
+              <line x1="50%" y1="50%" x2="80%" y2="25%" stroke={theme === 'dark' ? '#FFFFFF' : '#64748B'} strokeWidth="1.5" />
               <line x1="50%" y1="50%" x2="25%" y2="80%" stroke="#00B9F1" strokeWidth="1.5" />
               <line x1="20%" y1="25%" x2="12%" y2="50%" stroke="#00B9F1" strokeWidth="2" />
-              <line x1="50%" y1="50%" x2="75%" y2="78%" stroke="#FFFFFF" strokeWidth="2" />
+              <line x1="50%" y1="50%" x2="75%" y2="78%" stroke={theme === 'dark' ? '#FFFFFF' : '#64748B'} strokeWidth="2" />
             </svg>
 
             {/* Nodes Layout */}
@@ -65,10 +66,10 @@ export default function CogneeMemoryGraph({ theme }) {
                     onClick={() => setSelectedNode(node)}
                     className={`p-2.5 rounded-2xl border-2 transition-all duration-200 flex items-center gap-2.5 ${
                       isSelected
-                        ? 'bg-white text-black border-[#00B9F1] shadow-[0_0_18px_rgba(0,185,241,0.5)] scale-105 ring-2 ring-[#00B9F1]'
+                        ? 'bg-white dark:bg-neutral-900 text-black dark:text-white border-[#00B9F1] shadow-[0_0_18px_rgba(0,185,241,0.35)] scale-105 ring-2 ring-[#00B9F1]'
                         : node.risk === 'high'
-                        ? 'bg-neutral-900 border-[#00B9F1] text-white'
-                        : 'bg-neutral-900 border-neutral-700 text-white hover:border-white'
+                        ? 'bg-white dark:bg-neutral-900 border-[#00B9F1] text-black dark:text-white shadow-sm hover:scale-102'
+                        : 'bg-white dark:bg-neutral-900 border-neutral-300 dark:border-neutral-700 text-black dark:text-white hover:border-[#00B9F1] shadow-sm hover:scale-102'
                     }`}
                   >
                     <div
@@ -77,7 +78,7 @@ export default function CogneeMemoryGraph({ theme }) {
                           ? 'bg-[#00B9F1] text-black font-black'
                           : node.risk === 'high'
                           ? 'bg-[#00B9F1] text-black'
-                          : 'bg-white text-black'
+                          : 'bg-neutral-100 dark:bg-neutral-800 text-black dark:text-white border border-neutral-200 dark:border-neutral-700'
                       }`}
                     >
                       {node.type === 'merchant' ? (
@@ -90,10 +91,10 @@ export default function CogneeMemoryGraph({ theme }) {
                     </div>
 
                     <div className="text-left">
-                      <div className="text-xs font-bold leading-tight">
+                      <div className="text-xs font-bold leading-tight text-black dark:text-white">
                         {node.label}
                       </div>
-                      <span className="text-[10px] text-[#00B9F1] font-mono capitalize font-bold">
+                      <span className="text-[10px] text-[#008db8] dark:text-[#00B9F1] font-mono capitalize font-bold">
                         {node.risk}
                       </span>
                     </div>

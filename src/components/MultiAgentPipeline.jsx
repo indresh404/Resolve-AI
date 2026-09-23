@@ -59,8 +59,8 @@ export default function MultiAgentPipeline({ theme }) {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-neutral-200 dark:border-neutral-800">
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-black text-[#00B9F1] dark:bg-white dark:text-black text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/40">
-              <Workflow className="w-3.5 h-3.5 text-[#00B9F1] dark:text-black" />
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/30">
+              <Workflow className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1]" />
               n8n Multi-Agent Engine
             </div>
             <h2 className="text-2xl font-black text-black dark:text-white">
