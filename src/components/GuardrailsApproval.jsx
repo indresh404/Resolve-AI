@@ -40,8 +40,8 @@ export default function GuardrailsApproval({ theme, onOpenWhatsAppModal }) {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-neutral-200 dark:border-neutral-800">
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-black text-[#00B9F1] dark:bg-white dark:text-black text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/40">
-              <ShieldCheck className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/30">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1]" />
               HITL Guardrails
             </div>
             <h2 className="text-2xl font-black text-black dark:text-white">
@@ -60,7 +60,7 @@ export default function GuardrailsApproval({ theme, onOpenWhatsAppModal }) {
                 onClick={() => setFilter(f)}
                 className={`px-3 py-1 rounded-lg font-bold transition-all text-xs ${
                   filter === f
-                    ? 'bg-black text-[#00B9F1] dark:bg-white dark:text-black shadow-sm'
+                    ? 'bg-[#00B9F1] text-black font-black shadow-sm'
                     : 'text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white'
                 }`}
               >
@@ -169,9 +169,9 @@ export default function GuardrailsApproval({ theme, onOpenWhatsAppModal }) {
                   ) : task.status === 'READY' ? (
                     <button
                       onClick={onOpenWhatsAppModal}
-                      className="py-1.5 px-3 rounded-lg bg-black text-white hover:bg-neutral-800 dark:bg-white dark:text-black font-bold text-xs flex items-center gap-1 transition-all active:scale-95 border border-black dark:border-white"
+                      className="py-1.5 px-3 rounded-lg bg-white hover:bg-neutral-100 text-black dark:bg-white dark:text-black dark:hover:bg-neutral-200 font-bold text-xs flex items-center gap-1 transition-all active:scale-95 border border-neutral-300 dark:border-white shadow-sm"
                     >
-                      <Share2 className="w-3.5 h-3.5 text-[#00B9F1]" />
+                      <Share2 className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1]" />
                       <span>WhatsApp Link</span>
                     </button>
                   ) : (

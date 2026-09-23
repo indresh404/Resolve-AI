@@ -51,7 +51,7 @@ export default function HeroSection({ theme, onRunMorningCheck, onOpenVoiceModal
           <Store className="w-3.5 h-3.5 text-[#00B9F1]" />
           <span className="font-bold text-black dark:text-white">{merchantInfo.name}</span>
           <span className="text-neutral-300 dark:text-neutral-700">•</span>
-          <span className="text-[#00B9F1] font-bold flex items-center gap-1.5 bg-black dark:bg-[#00B9F1]/10 px-2.5 py-0.5 rounded-full border border-[#00B9F1]/30">
+          <span className="text-[#008db8] dark:text-[#00B9F1] font-bold flex items-center gap-1.5 bg-[#00B9F1]/10 px-2.5 py-0.5 rounded-full border border-[#00B9F1]/30">
             <span className="w-1.5 h-1.5 rounded-full bg-[#00B9F1] animate-pulse" />
             {merchantInfo.soundboxId}
           </span>
@@ -83,9 +83,9 @@ export default function HeroSection({ theme, onRunMorningCheck, onOpenVoiceModal
 
             <button
               onClick={onOpenVoiceModal}
-              className="px-4 py-2.5 rounded-xl bg-black text-white dark:bg-white dark:text-black font-bold text-sm hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all flex items-center gap-2 border border-black dark:border-white shadow-sm active:scale-95"
+              className="px-4 py-2.5 rounded-xl bg-white hover:bg-neutral-100 text-black dark:bg-white dark:text-black dark:hover:bg-neutral-200 font-bold text-sm transition-all flex items-center gap-2 border-2 border-neutral-300 dark:border-white shadow-sm active:scale-95"
             >
-              <Volume2 className="w-4 h-4 text-[#00B9F1]" />
+              <Volume2 className="w-4 h-4 text-[#008db8] dark:text-[#00B9F1]" />
               <span>Voice Copilot</span>
             </button>
           </div>
@@ -114,7 +114,7 @@ export default function HeroSection({ theme, onRunMorningCheck, onOpenVoiceModal
                 <span className="text-xs font-black text-black dark:text-white">
                   Live AI Thinking Engine
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.2 rounded-full bg-black text-[#00B9F1] dark:bg-white dark:text-black font-bold border border-[#00B9F1]/40">
+                <span className="text-[10px] font-mono px-2 py-0.2 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] font-bold border border-[#00B9F1]/40">
                   {orbState}
                 </span>
               </div>

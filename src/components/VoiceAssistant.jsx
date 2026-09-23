@@ -97,8 +97,8 @@ export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-neutral-200 dark:border-neutral-800">
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-black text-[#00B9F1] dark:bg-white dark:text-black text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/40">
-              <Volume2 className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/30">
+              <Volume2 className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1]" />
               Indic Voice Interface
             </div>
             <h2 className="text-2xl font-black text-black dark:text-white">
@@ -175,12 +175,12 @@ export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
                   <div
                     className={`p-3 rounded-2xl max-w-md text-xs leading-relaxed ${
                       msg.sender === 'user'
-                        ? 'bg-black text-[#00B9F1] rounded-tr-none font-bold'
+                        ? 'bg-[#00B9F1]/15 text-black dark:bg-neutral-900 dark:text-[#00B9F1] border border-[#00B9F1]/40 rounded-tr-none font-bold'
                         : 'bg-white dark:bg-black text-black dark:text-white border-2 border-neutral-300 dark:border-neutral-800 rounded-tl-none font-medium'
                     }`}
                   >
                     {msg.sender === 'user' && (
-                      <span className="text-[10px] font-bold text-white block mb-0.5">
+                      <span className="text-[10px] font-bold text-[#008db8] dark:text-[#00B9F1] block mb-0.5">
                         Merchant ({msg.lang || 'Voice'}):
                       </span>
                     )}
@@ -190,7 +190,7 @@ export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
                       <div className="mt-1.5 pt-1.5 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between text-[10px] text-neutral-500">
                         <button
                           onClick={() => playSpeech(msg.text)}
-                          className="flex items-center gap-1 text-[#00B9F1] hover:underline font-bold"
+                          className="flex items-center gap-1 text-[#008db8] dark:text-[#00B9F1] hover:underline font-bold"
                         >
                           <Volume2 className="w-3 h-3" />
                           <span>Replay Audio</span>
@@ -228,9 +228,9 @@ export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
 
               <button
                 type="submit"
-                className="p-2 rounded-xl bg-black text-white dark:bg-white dark:text-black transition-all shrink-0 active:scale-95"
+                className="p-2 rounded-xl bg-white hover:bg-neutral-100 text-black dark:bg-white dark:text-black dark:hover:bg-neutral-200 border border-neutral-300 dark:border-white transition-all shrink-0 active:scale-95 shadow-sm"
               >
-                <Send className="w-3.5 h-3.5 text-[#00B9F1]" />
+                <Send className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1]" />
               </button>
             </form>
           </div>
@@ -240,7 +240,7 @@ export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
             <div>
               <div className="flex items-center justify-between pb-2 border-b border-neutral-300 dark:border-neutral-800 mb-3">
                 <span className="text-xs font-black text-black dark:text-white flex items-center gap-1.5">
-                  <Radio className="w-3.5 h-3.5 text-[#00B9F1] animate-pulse" />
+                  <Radio className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1] animate-pulse" />
                   Soundbox 4G
                 </span>
                 <span className="text-[10px] font-mono text-black bg-[#00B9F1] px-2 py-0.2 rounded-full font-bold">
@@ -249,9 +249,9 @@ export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
               </div>
 
               {/* Soundbox Speaker Mesh Visual */}
-              <div className="w-20 h-20 mx-auto rounded-full bg-black border-4 border-[#00B9F1] shadow-[0_0_15px_rgba(0,185,241,0.3)] flex items-center justify-center p-2 relative my-2">
-                <div className="w-full h-full rounded-full bg-neutral-900 flex items-center justify-center">
-                  <Volume2 className={`w-6 h-6 text-[#00B9F1] ${isPlayingAudio ? 'animate-bounce' : ''}`} />
+              <div className="w-20 h-20 mx-auto rounded-full bg-neutral-100 dark:bg-black border-4 border-[#00B9F1] shadow-[0_0_15px_rgba(0,185,241,0.3)] flex items-center justify-center p-2 relative my-2">
+                <div className="w-full h-full rounded-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 flex items-center justify-center">
+                  <Volume2 className={`w-6 h-6 text-[#008db8] dark:text-[#00B9F1] ${isPlayingAudio ? 'animate-bounce' : ''}`} />
                 </div>
               </div>
 

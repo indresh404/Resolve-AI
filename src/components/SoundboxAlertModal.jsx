@@ -48,15 +48,15 @@ export default function SoundboxAlertModal({ theme, isOpen, onClose }) {
         </button>
 
         {/* Top Soundbox Device Badge */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black text-[#00B9F1] dark:bg-white dark:text-black text-xs font-black uppercase tracking-wider border border-[#00B9F1]/40 mb-4">
-          <Radio className="w-3.5 h-3.5 animate-pulse text-[#00B9F1] dark:text-black" />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] text-xs font-black uppercase tracking-wider border border-[#00B9F1]/40 mb-4">
+          <Radio className="w-3.5 h-3.5 animate-pulse text-[#008db8] dark:text-[#00B9F1]" />
           Merchant Soundbox 4G Voice Engine
         </div>
 
         {/* Animated Speaker Visualizer */}
-        <div className="w-28 h-28 mx-auto rounded-full bg-black border-4 border-[#00B9F1] shadow-[0_0_20px_rgba(0,185,241,0.35)] flex items-center justify-center relative my-4">
-          <div className="w-20 h-20 rounded-full bg-neutral-900 flex items-center justify-center">
-            <Volume2 className={`w-8 h-8 text-[#00B9F1] ${isPlaying ? 'animate-bounce scale-110' : ''}`} />
+        <div className="w-28 h-28 mx-auto rounded-full bg-neutral-100 dark:bg-black border-4 border-[#00B9F1] shadow-[0_0_20px_rgba(0,185,241,0.35)] flex items-center justify-center relative my-4">
+          <div className="w-20 h-20 rounded-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 flex items-center justify-center">
+            <Volume2 className={`w-8 h-8 text-[#008db8] dark:text-[#00B9F1] ${isPlaying ? 'animate-bounce scale-110' : ''}`} />
           </div>
 
           {isPlaying && (
@@ -81,7 +81,7 @@ export default function SoundboxAlertModal({ theme, isOpen, onClose }) {
             <button
               key={c.amount}
               onClick={() => playVoiceChime(c.amount)}
-              className="p-2.5 rounded-xl bg-neutral-100 hover:bg-black hover:text-[#00B9F1] dark:bg-neutral-900 dark:hover:bg-white dark:hover:text-black border border-neutral-300 dark:border-neutral-800 text-xs font-black text-black dark:text-white transition-all active:scale-95 shadow-sm"
+              className="p-2.5 rounded-xl bg-neutral-100 hover:bg-[#00B9F1]/20 text-black dark:bg-neutral-900 dark:hover:bg-white dark:hover:text-black border border-neutral-300 dark:border-neutral-800 text-xs font-black transition-all active:scale-95 shadow-sm"
             >
               {c.label}
             </button>

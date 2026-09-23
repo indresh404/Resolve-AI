@@ -62,7 +62,7 @@ export default function Navbar({
                 }}
                 className={`px-3.5 py-1 rounded-full font-semibold transition-all ${
                   isActive
-                    ? 'bg-black text-[#00B9F1] dark:bg-white dark:text-black font-black shadow-sm'
+                    ? 'bg-[#00B9F1] text-black font-black shadow-sm'
                     : 'text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white'
                 }`}
               >

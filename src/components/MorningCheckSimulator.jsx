@@ -94,8 +94,8 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-neutral-200 dark:border-neutral-800">
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-black text-[#00B9F1] dark:bg-white dark:text-black text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/40">
-              <Clock className="w-3.5 h-3.5 text-[#00B9F1] dark:text-black" />
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/30">
+              <Clock className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1]" />
               Proactive Daily Audit
             </div>
             <h2 className="text-2xl font-black text-black dark:text-white">
@@ -191,7 +191,7 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
           <div className="lg:col-span-6 bw-inset p-4 border border-neutral-300 dark:border-neutral-800">
             <div className="flex items-center justify-between mb-2.5">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-black text-[#00B9F1] dark:bg-white dark:text-black">
+                <div className="p-1.5 rounded-lg bg-[#00B9F1]/15 text-[#008db8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] border border-[#00B9F1]/30">
                   <Volume2 className="w-3.5 h-3.5 animate-pulse" />
                 </div>
                 <div>
@@ -204,7 +204,7 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
               {/* Audio Play Trigger */}
               <button
                 onClick={toggleAudio}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-black text-white hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200 font-bold text-xs shadow-sm transition-all active:scale-95"
+                className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white hover:bg-neutral-100 text-black dark:bg-white dark:text-black dark:hover:bg-neutral-200 font-bold text-xs shadow-sm transition-all active:scale-95 border border-neutral-300 dark:border-white"
               >
                 {isPlayingAudio ? (
                   <>
@@ -213,7 +213,7 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
                   </>
                 ) : (
                   <>
-                    <Volume2 className="w-3.5 h-3.5 text-[#00B9F1]" />
+                    <Volume2 className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1]" />
                     <span>Play Audio</span>
                   </>
                 )}
@@ -229,7 +229,7 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
 
             {/* Soundbox Sound Wave Visualizer */}
             <div className="mt-2.5 pt-2 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between text-[10px] text-neutral-500">
-              <span className="font-mono text-[#00B9F1] font-bold">Sarvam Indic TTS (14s)</span>
+              <span className="font-mono text-[#008db8] dark:text-[#00B9F1] font-bold">Sarvam Indic TTS (14s)</span>
               <div className="flex items-end gap-1 h-4">
                 {[4, 12, 18, 24, 14, 8, 22, 16, 10, 20, 14, 6].map((h, i) => (
                   <div
@@ -248,12 +248,12 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
           <div className="lg:col-span-6 bw-inset p-4 border border-neutral-300 dark:border-neutral-800">
             <div className="flex items-center justify-between mb-2.5">
               <div className="flex items-center gap-1.5">
-                <AlertTriangle className="w-3.5 h-3.5 text-[#00B9F1]" />
+                <AlertTriangle className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1]" />
                 <h3 className="text-xs sm:text-sm font-black text-black dark:text-white">
                   Decision Card (1 Pending)
                 </h3>
               </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-black text-[#00B9F1] dark:bg-white dark:text-black font-black border border-[#00B9F1]">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] font-black border border-[#00B9F1]/40">
                 &gt; ₹5,000
               </span>
             </div>
@@ -263,7 +263,7 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
                 <div>
                   <div className="text-xs font-black text-black dark:text-white flex items-center gap-1.5">
                     <span>Dispute: Rajesh Kumar</span>
-                    <span className="text-xs text-[#00B9F1] font-mono font-black">₹5,400</span>
+                    <span className="text-xs text-[#008db8] dark:text-[#00B9F1] font-mono font-black">₹5,400</span>
                   </div>
                   <p className="text-[11px] text-neutral-600 dark:text-neutral-400 mt-0.5 font-medium">
                     TXN-9941 dispute. Invoice & CCTV ready. Submit contest to bank?
@@ -273,8 +273,8 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
 
               {/* Approval status banner or action buttons */}
               {approvedChargeback === 'approved' ? (
-                <div className="mt-2.5 p-2 rounded-lg bg-black text-[#00B9F1] dark:bg-white dark:text-black text-xs font-black flex items-center gap-1.5 border border-[#00B9F1]">
-                  <CheckCircle2 className="w-4 h-4 text-[#00B9F1] dark:text-black" />
+                <div className="mt-2.5 p-2 rounded-lg bg-[#00B9F1]/15 text-black dark:bg-white dark:text-black text-xs font-black flex items-center gap-1.5 border border-[#00B9F1]">
+                  <CheckCircle2 className="w-4 h-4 text-[#008db8] dark:text-black" />
                   <span>Approved! Dispute packet dispatched to bank.</span>
                 </div>
               ) : approvedChargeback === 'rejected' ? (

@@ -20,8 +20,8 @@ export default function App() {
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
   const [isSoundboxModalOpen, setIsSoundboxModalOpen] = useState(false);
   
-  // White / Light theme by default as requested
-  const [theme, setTheme] = useState('light');
+  // Pure Black & White theme (dark mode default)
+  const [theme, setTheme] = useState('dark');
 
   useEffect(() => {
     if (theme === 'dark') {

@@ -201,7 +201,7 @@ export default function MultiAgentPipeline({ theme }) {
                 {selectedAgent.tools.map((t, i) => (
                   <span
                     key={i}
-                    className="px-2 py-0.5 rounded-md bg-black text-[#00B9F1] dark:bg-white dark:text-black text-[11px] font-mono font-bold"
+                    className="px-2 py-0.5 rounded-md bg-[#00B9F1]/15 text-black dark:bg-neutral-800 dark:text-[#00B9F1] border border-[#00B9F1]/30 dark:border-neutral-700 text-[11px] font-mono font-bold"
                   >
                     {t}
                   </span>
@@ -211,7 +211,7 @@ export default function MultiAgentPipeline({ theme }) {
           </div>
 
           {/* Right: Live Execution Log Terminal */}
-          <div className="lg:col-span-7 rounded-2xl p-4 bg-black border-2 border-neutral-800 shadow-inner font-mono text-xs">
+          <div className="lg:col-span-7 rounded-2xl p-4 bg-neutral-950 dark:bg-black border-2 border-neutral-800 shadow-inner font-mono text-xs">
             <div className="flex items-center justify-between pb-2.5 border-b border-neutral-800 mb-2 text-neutral-400">
               <div className="flex items-center gap-1.5">
                 <Terminal className="w-3.5 h-3.5 text-[#00B9F1]" />

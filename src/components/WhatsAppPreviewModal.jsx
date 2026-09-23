@@ -61,7 +61,7 @@ export default function WhatsAppPreviewModal({ theme, isOpen, onClose }) {
           
           {/* WhatsApp Chat Header */}
           <div className="flex items-center gap-2.5 pb-2 border-b border-neutral-300 dark:border-neutral-800">
-            <div className="w-8 h-8 rounded-full bg-black text-[#00B9F1] font-black flex items-center justify-center text-xs border border-[#00B9F1]/40">
+            <div className="w-8 h-8 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-black dark:text-[#00B9F1] font-black flex items-center justify-center text-xs border border-[#00B9F1]/40">
               SG
             </div>
             <div>
