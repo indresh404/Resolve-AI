@@ -16,22 +16,6 @@ import {
 import { merchantInfo, recoveryStats } from '../data/mockData';
 
 export default function HeroSection({ theme, onRunMorningCheck, onOpenVoiceModal }) {
-  const [orbState, setOrbState] = React.useState('working');
-  const [orbSpeed, setOrbSpeed] = React.useState(1);
-  const [isPaused, setIsPaused] = React.useState(false);
-
-  const orbStates = [
-    { id: 'working', label: 'Working', desc: 'Active reconciliation & ledger audit' },
-    { id: 'searching', label: 'Searching', desc: 'Querying Gateway API & bank UTRs' },
-    { id: 'solving', label: 'Solving', desc: 'Mathematical root cause attribution' },
-    { id: 'listening', label: 'Listening', desc: 'Sarvam Indic voice STT stream' },
-    { id: 'connecting', label: 'Connecting', desc: 'n8n webhook dispatching claims' },
-    { id: 'weaving', label: 'Weaving', desc: 'Cognee graph pattern correlation' },
-    { id: 'composing', label: 'Composing', desc: 'Drafting dispute contest packet' },
-    { id: 'breathing', label: 'Breathing', desc: 'Proactive background idle monitor' },
-    { id: 'shaping', label: 'Shaping', desc: 'Dynamic merchant risk scoring' },
-  ];
-
   return (
     <section id="overview" className="pt-4 pb-6 px-4 max-w-5xl mx-auto w-full">
       
@@ -104,93 +88,103 @@ export default function HeroSection({ theme, onRunMorningCheck, onOpenVoiceModal
           </div>
         </div>
 
-        {/* Right Column: Live Teammate Working Card with Interactive Orb */}
+        {/* Right Column: Live Autonomous Teammate Activity Hub */}
         <div className="lg:col-span-5">
-          <div className="bw-card p-5">
+          <div className="bw-card p-5 space-y-3.5">
             
-            {/* Header of Card */}
-            <div className="flex items-center justify-between pb-3 border-b border-neutral-200 dark:border-neutral-800 mb-3">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-neutral-200 dark:border-neutral-800">
               <div className="flex items-center gap-2">
+                <ThinkingOrb state="working" size={20} dark={theme === 'dark'} />
                 <span className="text-xs font-black text-black dark:text-white">
-                  Live AI Thinking Engine
-                </span>
-                <span className="text-[10px] font-mono px-2 py-0.2 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] font-bold border border-[#00B9F1]/40">
-                  {orbState}
+                  Autonomous Teammate Feed
                 </span>
               </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live Sync
+              </span>
+            </div>
 
-              {/* Speed & Pause Controls */}
-              <div className="flex items-center gap-1">
-                {[0.5, 1, 2].map((sp) => (
-                  <button
-                    key={sp}
-                    onClick={() => setOrbSpeed(sp)}
-                    className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-all ${
-                      orbSpeed === sp
-                        ? 'bg-[#00B9F1] text-black font-black'
-                        : 'bg-neutral-100 dark:bg-neutral-900 text-neutral-500 hover:text-black dark:hover:text-white'
-                    }`}
-                  >
-                    {sp}x
-                  </button>
-                ))}
-                <button
-                  onClick={() => setIsPaused(!isPaused)}
-                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                    isPaused ? 'bg-amber-500 text-black' : 'text-neutral-500 hover:text-black dark:hover:text-white'
-                  }`}
-                  title={isPaused ? "Resume Animation" : "Pause Animation"}
-                >
-                  {isPaused ? "Play" : "Pause"}
-                </button>
+            {/* Quick Ledger Snapshot */}
+            <div className="grid grid-cols-3 gap-2 p-2.5 rounded-xl bw-inset text-center border border-neutral-200 dark:border-neutral-800 text-xs">
+              <div>
+                <span className="text-[10px] text-neutral-500 font-bold block">Expected</span>
+                <span className="font-black text-black dark:text-white text-xs">₹9,800</span>
+              </div>
+              <div>
+                <span className="text-[10px] text-neutral-500 font-bold block">Settled</span>
+                <span className="font-black text-black dark:text-white text-xs">₹7,460</span>
+              </div>
+              <div>
+                <span className="text-[10px] text-[#008db8] dark:text-[#00B9F1] font-bold block">Disputed</span>
+                <span className="font-black text-[#008db8] dark:text-[#00B9F1] text-xs">₹2,340</span>
               </div>
             </div>
 
-            {/* Central Animated Orb Display (Size 64) */}
-            <div className="py-2 flex flex-col items-center justify-center text-center">
-              <div className="p-2 rounded-full bg-neutral-100 dark:bg-neutral-950 border-2 border-neutral-200 dark:border-neutral-800 shadow-inner flex items-center justify-center my-1 relative">
-                <ThinkingOrb 
-                  state={orbState} 
-                  size={64} 
-                  speed={orbSpeed} 
-                  dark={theme === 'dark'} 
-                  paused={isPaused} 
-                />
-              </div>
+            {/* Live Event Timeline */}
+            <div className="space-y-2 text-xs">
+              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-wider block">
+                Today's Autonomous Actions:
+              </span>
 
-              <div className="text-xs font-black text-black dark:text-white mt-2 capitalize">
-                State: <span className="text-[#00B9F1]">{orbState}</span>
+              <div className="space-y-2">
+                <div className="flex items-start gap-2 p-2 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+                  <span className="p-1 rounded-full bg-[#00B9F1]/15 text-[#008db8] dark:text-[#00B9F1] shrink-0 mt-0.5">
+                    <CheckCircle2 className="w-3 h-3" />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <strong className="text-black dark:text-white font-bold">50 Txns Audited</strong>
+                      <span className="text-[10px] font-mono text-neutral-400">09:00 AM</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 truncate">
+                      Reconciler matched bank UTRs with zero manual work.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2 p-2 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+                  <span className="p-1 rounded-full bg-[#00B9F1]/15 text-[#008db8] dark:text-[#00B9F1] shrink-0 mt-0.5">
+                    <CheckCircle2 className="w-3 h-3" />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <strong className="text-black dark:text-white font-bold">₹2,140 Claims Filed</strong>
+                      <span className="text-[10px] font-mono text-neutral-400">09:01 AM</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 truncate">
+                      Auto-dispatched refund dispute & failed debit claim.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2 p-2 rounded-xl bg-white dark:bg-neutral-900 border border-[#00B9F1]/40">
+                  <span className="p-1 rounded-full bg-[#00B9F1]/20 text-[#008db8] dark:text-[#00B9F1] shrink-0 mt-0.5">
+                    <ShieldCheck className="w-3 h-3" />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <strong className="text-black dark:text-white font-bold">1 Decision Queued</strong>
+                      <span className="text-[10px] font-mono text-[#008db8] dark:text-[#00B9F1] font-bold">Pending</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 truncate">
+                      ₹5,400 chargeback awaiting 1-tap merchant approval.
+                    </p>
+                  </div>
+                </div>
               </div>
-              <p className="text-[11px] text-neutral-500 font-medium max-w-xs mt-0.5">
-                {orbStates.find((s) => s.id === orbState)?.desc}
-              </p>
             </div>
 
-            {/* 9 Interactive State Quick Selector */}
-            <div className="mt-3 pt-3 border-t border-neutral-200 dark:border-neutral-800">
-              <div className="flex items-center justify-between text-[10px] text-neutral-400 font-bold mb-1.5">
-                <span>9 Animated States:</span>
-                <span>Click to switch</span>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {orbStates.map((s) => {
-                  const isActive = orbState === s.id;
-                  return (
-                    <button
-                      key={s.id}
-                      onClick={() => setOrbState(s.id)}
-                      className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1 ${
-                        isActive
-                          ? 'bg-[#00B9F1] text-black font-black shadow-sm ring-1 ring-[#00B9F1]'
-                          : 'bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-900 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300'
-                      }`}
-                    >
-                      <ThinkingOrb state={s.id} size={12} speed={1} dark={isActive ? false : theme === 'dark'} />
-                      <span>{s.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
+            {/* Bottom Quick Run Action */}
+            <div className="pt-2 border-t border-neutral-200 dark:border-neutral-800">
+              <button
+                onClick={onRunMorningCheck}
+                className="w-full py-2 px-3 rounded-xl electric-glow-btn text-black font-black text-xs transition-all flex items-center justify-center gap-1.5 active:scale-95"
+              >
+                <Play className="w-3.5 h-3.5 fill-black" />
+                <span>Execute Morning Check (9:00 AM)</span>
+              </button>
             </div>
 
           </div>
