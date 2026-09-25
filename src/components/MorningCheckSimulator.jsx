@@ -196,7 +196,7 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
                 </div>
                 <div>
                   <h3 className="text-xs sm:text-sm font-black text-black dark:text-white flex items-center gap-1.5">
-                    Sarvam AI Voice Briefing <span className="text-[10px] px-2 py-0.2 rounded-full bg-[#00B9F1] text-black font-black">Hindi</span>
+                    Merchant Soundbox 4G Voice Briefing <span className="text-[10px] px-2 py-0.2 rounded-full bg-[#00B9F1] text-black font-black">Hindi (4G Active)</span>
                   </h3>
                 </div>
               </div>

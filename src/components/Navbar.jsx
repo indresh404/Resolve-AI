@@ -1,22 +1,20 @@
 import React from 'react';
 import { ThinkingOrb } from './ThinkingOrbWrapper';
 import { 
-  Wifi, 
-  WifiOff, 
   Sun,
   Moon,
-  Play
+  Play,
+  Radio
 } from 'lucide-react';
 
 export default function Navbar({ 
   onRunMorningCheck, 
   isMorningCheckRunning, 
-  isOffline, 
-  setIsOffline, 
   activeTab, 
   setActiveTab,
   theme,
-  onToggleTheme
+  onToggleTheme,
+  onOpenSoundboxChime
 }) {
   return (
     <header className="sticky top-4 z-50 px-4 max-w-5xl mx-auto w-full">
@@ -26,7 +24,7 @@ export default function Navbar({
         <div className="flex items-center gap-2.5">
           <div className="flex items-center justify-center">
             <ThinkingOrb 
-              state={isMorningCheckRunning ? "working" : isOffline ? "breathing" : "searching"} 
+              state={isMorningCheckRunning ? "working" : "searching"} 
               size={22} 
               dark={theme === 'dark'}
             />
@@ -48,8 +46,9 @@ export default function Navbar({
             { id: 'overview', label: 'Overview' },
             { id: 'morning-check', label: 'Audit' },
             { id: 'settlement', label: 'Reconciliation' },
-            { id: 'voice', label: 'Voice' },
+            { id: 'guardrails', label: 'Guardrails' },
             { id: 'agents', label: 'Agents' },
+            { id: 'voice', label: 'Voice' },
           ].map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -75,6 +74,16 @@ export default function Navbar({
         {/* Streamlined Right Controls */}
         <div className="flex items-center gap-2">
           
+          {/* Soundbox 4G Voice Engine Direct Trigger */}
+          <button
+            onClick={onOpenSoundboxChime}
+            className="p-1.5 px-2.5 rounded-full bg-neutral-100 hover:bg-[#00B9F1]/20 dark:bg-neutral-900 text-black dark:text-white border border-neutral-300 dark:border-neutral-700 hover:border-[#00B9F1] transition-all flex items-center gap-1.5 text-xs font-bold active:scale-95"
+            title="Merchant Soundbox 4G Voice Engine (Click to broadcast)"
+          >
+            <Radio className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1] animate-pulse" />
+            <span className="hidden md:inline font-mono text-[11px]">Soundbox 4G</span>
+          </button>
+
           {/* Theme Switcher */}
           <button
             onClick={onToggleTheme}
@@ -82,25 +91,6 @@ export default function Navbar({
             title={theme === 'dark' ? "Switch to Pure White Theme" : "Switch to Pure Black Theme"}
           >
             {theme === 'dark' ? <Sun className="w-4 h-4 text-[#00B9F1]" /> : <Moon className="w-4 h-4 text-black" />}
-          </button>
-
-          {/* Minimal Connectivity Dot / Toggle */}
-          <button
-            onClick={() => setIsOffline(!isOffline)}
-            className="px-2.5 py-1 rounded-full text-xs font-bold border border-neutral-300 dark:border-neutral-700 hover:border-[#00B9F1] transition-all flex items-center gap-1.5"
-            title={isOffline ? "Offline Mode (Click to connect)" : "Online Mode (Click to simulate offline)"}
-          >
-            {isOffline ? (
-              <>
-                <WifiOff className="w-3 h-3 text-amber-500" />
-                <span className="text-[10px] text-amber-600 dark:text-amber-400">Offline</span>
-              </>
-            ) : (
-              <>
-                <span className="w-2 h-2 rounded-full bg-[#00B9F1] shadow-[0_0_8px_#00B9F1]" />
-                <span className="text-[10px] text-black dark:text-white">Live</span>
-              </>
-            )}
           </button>
 
           {/* Primary Action Button: Electric Blue Glow */}

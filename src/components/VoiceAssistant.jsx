@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { ThinkingOrb } from './ThinkingOrbWrapper';
+import { Component as AILoader } from './ui/ai-loader';
+import { KineticLoader } from './ui/kinetic-orb-loader';
 import { 
   Mic, 
   Volume2, 
@@ -8,13 +10,19 @@ import {
   Globe, 
   Radio, 
   Play, 
-  CheckCircle2 
+  CheckCircle2,
+  Sparkles,
+  Headphones,
+  Sliders,
+  Wifi,
+  Eye
 } from 'lucide-react';
 import { voiceScenarios } from '../data/mockData';
 
 export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
   const [activeScenario, setActiveScenario] = useState(voiceScenarios[0]);
   const [isRecording, setIsRecording] = useState(false);
+  const [loaderText, setLoaderText] = useState('Listening...');
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [customQuery, setCustomQuery] = useState('');
   const [chatLog, setChatLog] = useState([
@@ -74,43 +82,61 @@ export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
       { sender: 'user', text: userMsg, lang: 'Hinglish' },
       {
         sender: 'ai',
-        text: `Sarvam AI: Analyzing query "${userMsg}" against Postgres settlements and n8n dispute dispatcher. All calculations verified with deterministic Critic guardrail.`,
+        text: `Sarvam AI: Analyzing query "${userMsg}" against Postgres settlement ledger and n8n recovery flows. All calculations verified with deterministic Critic guardrail.`,
         orbState: 'solving',
         time: 'Just now'
       }
     ]);
   };
 
-  const handleMicClick = () => {
+  const handleMicClick = (txt = "Listening...") => {
+    setLoaderText(txt);
     setIsRecording(true);
-    setTimeout(() => {
-      setIsRecording(false);
-      handleSelectScenario(voiceScenarios[0]);
-      playSpeech(voiceScenarios[0].responseAudioText);
-    }, 1600);
   };
 
   return (
-    <section id="voice" className="py-3 px-4 max-w-5xl mx-auto w-full">
+    <section id="voice" className="py-3 px-4 max-w-5xl mx-auto w-full relative">
+      
+      {/* AI Loader Fullscreen Voice Listener Modal */}
+      {isRecording && (
+        <AILoader 
+          size={190} 
+          text={loaderText} 
+          onClose={() => {
+            setIsRecording(false);
+            handleSelectScenario(voiceScenarios[0]);
+            playSpeech(voiceScenarios[0].responseAudioText);
+          }} 
+        />
+      )}
+
       <div className="bw-card p-5 sm:p-6">
         
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-neutral-200 dark:border-neutral-800">
           <div>
             <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/30">
-              <Volume2 className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1]" />
-              Indic Voice Interface
+              <Radio className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1] animate-pulse" />
+              Merchant Soundbox 4G Voice Engine
             </div>
             <h2 className="text-2xl font-black text-black dark:text-white">
               Multilingual Voice Copilot
             </h2>
             <p className="text-neutral-600 dark:text-neutral-400 text-xs sm:text-sm mt-0.5 max-w-xl font-medium">
-              Ask about settlements, refunds, and collections naturally in Hindi, Marathi, Hinglish, or English.
+              Merchant Soundbox 4G broadcasts daily settlement breakdowns, files claims by voice, and confirms money recoveries in Hindi, Marathi, Hinglish, or English.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs px-3 py-1 rounded-full bw-inset text-black dark:text-white font-bold flex items-center gap-1.5 border border-neutral-300 dark:border-neutral-800">
+            <button
+              onClick={() => handleMicClick("Listening...")}
+              className="text-xs px-3 py-1.5 rounded-xl electric-glow-btn text-black font-black flex items-center gap-1.5 active:scale-95 shadow-sm"
+            >
+              <Eye className="w-3.5 h-3.5 fill-black" />
+              <span>Preview AI Loader</span>
+            </button>
+
+            <span className="text-xs px-3 py-1.5 rounded-xl bw-inset text-black dark:text-white font-bold flex items-center gap-1.5 border border-neutral-300 dark:border-neutral-800">
               <Globe className="w-3.5 h-3.5 text-[#00B9F1]" />
               Sarvam AI
             </span>
@@ -120,7 +146,7 @@ export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
         {/* Quick Query Scenarios */}
         <div className="mt-4 mb-3">
           <span className="text-[10px] font-black text-neutral-500 uppercase tracking-wider block mb-2">
-            Sample Voice Queries:
+            Merchant Soundbox 4G Spoken Queries:
           </span>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
             {voiceScenarios.map((sc) => {
@@ -158,7 +184,7 @@ export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-2">
           
           {/* Left: Chat Stream */}
-          <div className="lg:col-span-8 rounded-2xl bw-inset p-4 flex flex-col justify-between min-h-[300px] border border-neutral-300 dark:border-neutral-800">
+          <div className="lg:col-span-7 rounded-2xl bw-inset p-4 flex flex-col justify-between min-h-[300px] border border-neutral-300 dark:border-neutral-800">
             
             <div className="space-y-3 overflow-y-auto max-h-[220px] pr-1">
               {chatLog.map((msg, i) => (
@@ -193,9 +219,9 @@ export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
                           className="flex items-center gap-1 text-[#008db8] dark:text-[#00B9F1] hover:underline font-bold"
                         >
                           <Volume2 className="w-3 h-3" />
-                          <span>Replay Audio</span>
+                          <span>Broadcast on Soundbox 4G</span>
                         </button>
-                        <span className="font-mono text-neutral-400">Sarvam TTS</span>
+                        <span className="font-mono text-neutral-400">Sarvam Indic TTS</span>
                       </div>
                     )}
                   </div>
@@ -207,22 +233,18 @@ export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
             <form onSubmit={handleCustomSubmit} className="mt-3 pt-2.5 border-t border-neutral-300 dark:border-neutral-800 flex items-center gap-2">
               <button
                 type="button"
-                onClick={handleMicClick}
-                className={`p-2.5 rounded-full font-bold transition-all shrink-0 active:scale-95 flex items-center justify-center ${
-                  isRecording
-                    ? 'bg-red-500 text-white animate-pulse'
-                    : 'bg-[#00B9F1] text-black shadow-[0_0_12px_rgba(0,185,241,0.4)]'
-                }`}
-                title={isRecording ? "Listening..." : "Click to Speak"}
+                onClick={() => handleMicClick("Listening...")}
+                className="p-2.5 rounded-full font-bold transition-all shrink-0 active:scale-95 flex items-center justify-center bg-[#00B9F1] text-black shadow-[0_0_15px_rgba(0,185,241,0.5)] hover:scale-105"
+                title="Speak to Merchant Soundbox 4G Voice Engine"
               >
-                {isRecording ? <ThinkingOrb state="listening" size={16} dark={true} /> : <Mic className="w-4 h-4" />}
+                <Mic className="w-4 h-4" />
               </button>
 
               <input
                 type="text"
                 value={customQuery}
                 onChange={(e) => setCustomQuery(e.target.value)}
-                placeholder={isRecording ? "Listening in Hindi/English..." : "Speak or type in Hindi, Marathi, Hinglish..."}
+                placeholder="Speak or type: 'Sharma ji ke dukaan ka gap explain karo'..."
                 className="flex-1 bg-white dark:bg-black border border-neutral-300 dark:border-neutral-800 rounded-xl px-3 py-2 text-xs text-black dark:text-white placeholder-neutral-400 focus:outline-none focus:border-[#00B9F1] font-medium"
               />
 
@@ -235,43 +257,61 @@ export default function VoiceAssistant({ theme, onOpenSoundboxChime }) {
             </form>
           </div>
 
-          {/* Right: Soundbox Speaker Hardware Simulator */}
-          <div className="lg:col-span-4 bw-inset p-4 flex flex-col justify-between text-center border border-neutral-300 dark:border-neutral-800">
-            <div>
-              <div className="flex items-center justify-between pb-2 border-b border-neutral-300 dark:border-neutral-800 mb-3">
-                <span className="text-xs font-black text-black dark:text-white flex items-center gap-1.5">
-                  <Radio className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1] animate-pulse" />
-                  Soundbox 4G
-                </span>
-                <span className="text-[10px] font-mono text-black bg-[#00B9F1] px-2 py-0.2 rounded-full font-bold">
-                  Active
-                </span>
+          {/* Right: Embedded AI Voice Loader Animation Card */}
+          <div className="lg:col-span-5 rounded-2xl bg-gradient-to-b from-[#1a3379]/80 via-[#0f172a] to-black border-2 border-[#00B9F1]/40 p-4 flex flex-col items-center justify-between text-center relative overflow-hidden shadow-2xl">
+            
+            <div className="w-full flex items-center justify-between pb-2 border-b border-white/10 text-white text-[11px] font-mono">
+              <span className="flex items-center gap-1.5 font-bold text-[#00B9F1]">
+                <Sparkles className="w-3.5 h-3.5" />
+                Live AI Loader Engine
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#00B9F1]/20 text-[#00B9F1] border border-[#00B9F1]/40">
+                Active Wave
+              </span>
+            </div>
+
+            {/* Embedded Live Rotating AI Circular Loader with Letters */}
+            <div className="relative my-4 flex items-center justify-center select-none" style={{ width: 140, height: 140 }}>
+              <div className="flex items-center justify-center tracking-widest font-black text-sm z-10">
+                {"Listening...".split("").map((letter, index) => (
+                  <span
+                    key={index}
+                    className="inline-block text-white opacity-60 animate-loaderLetter font-mono font-bold"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    {letter === " " ? "\u00A0" : letter}
+                  </span>
+                ))}
               </div>
 
-              {/* Soundbox Speaker Mesh Visual */}
-              <div className="w-20 h-20 mx-auto rounded-full bg-neutral-100 dark:bg-black border-4 border-[#00B9F1] shadow-[0_0_15px_rgba(0,185,241,0.3)] flex items-center justify-center p-2 relative my-2">
-                <div className="w-full h-full rounded-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 flex items-center justify-center">
-                  <Volume2 className={`w-6 h-6 text-[#008db8] dark:text-[#00B9F1] ${isPlayingAudio ? 'animate-bounce' : ''}`} />
-                </div>
-              </div>
+              {/* Glowing Rotating Inset Ring */}
+              <div className="absolute inset-0 rounded-full animate-loaderCircle pointer-events-none" />
+            </div>
 
-              <h4 className="text-xs sm:text-sm font-black text-black dark:text-white mt-2">
-                Live Voice Chimes
-              </h4>
-              <p className="text-[11px] text-neutral-500 mt-0.5 font-medium leading-tight">
-                Dispute recovery & payment alerts broadcast directly in shop.
+            <div className="w-full space-y-2">
+              <p className="text-[11px] text-neutral-300 font-medium leading-tight">
+                Indic Voice Engine active with real-time waveform and rotating inset glow.
               </p>
+
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  onClick={() => handleMicClick("Listening...")}
+                  className="py-1.5 px-2 rounded-xl bg-[#00B9F1] text-black font-black text-xs hover:bg-[#38D4FF] transition-all shadow-md active:scale-95 flex items-center justify-center gap-1"
+                >
+                  <Mic className="w-3.5 h-3.5" />
+                  <span>Start Voice In</span>
+                </button>
+
+                <button
+                  onClick={onOpenSoundboxChime}
+                  className="py-1.5 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all border border-white/20 active:scale-95 flex items-center justify-center gap-1"
+                >
+                  <Radio className="w-3.5 h-3.5 text-[#00B9F1]" />
+                  <span>Soundbox 4G</span>
+                </button>
+              </div>
             </div>
 
-            <div className="mt-3 pt-3 border-t border-neutral-300 dark:border-neutral-800">
-              <button
-                onClick={onOpenSoundboxChime}
-                className="w-full py-2 px-3 rounded-xl electric-glow-btn text-black font-black text-xs transition-all flex items-center justify-center gap-1.5 active:scale-95"
-              >
-                <Play className="w-3.5 h-3.5 fill-black" />
-                <span>Test Soundbox Audio</span>
-              </button>
-            </div>
           </div>
 
         </div>

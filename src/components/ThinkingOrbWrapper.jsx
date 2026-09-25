@@ -1,16 +1,56 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { ThinkingOrb as OrgThinkingOrb } from 'thinking-orbs';
 
+const VALID_STATES = [
+  'working',
+  'searching',
+  'solving',
+  'listening',
+  'connecting',
+  'weaving',
+  'composing',
+  'breathing',
+  'shaping'
+];
+
+const STATE_MAPPINGS = {
+  'solved': 'solving',
+  'idle': 'breathing',
+  'active': 'working',
+  'running': 'working',
+  'success': 'solving',
+  'ready': 'breathing',
+  'waiting': 'listening',
+  'evaluating': 'shaping'
+};
+
+class OrbErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.warn("ThinkingOrb render error suppressed:", error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // Elegant fallback pulsing dot with electric blue glow
+      return (
+        <span className="w-3 h-3 rounded-full bg-[#00B9F1] inline-block animate-pulse shadow-[0_0_8px_#00B9F1]" />
+      );
+    }
+    return this.props.children;
+  }
+}
+
 /**
- * Official Libraries.dev ThinkingOrb Adapter
- * 
- * Props supported:
- * - state: "working" | "searching" | "solving" | "listening" | "connecting" | "weaving" | "composing" | "breathing" | "shaping"
- * - size: 64 (avatar) or 20 (inline) or custom numeric size (auto-scaled)
- * - speed: multiplier for animation clock (default: 1)
- * - dark: boolean | "dark" | "light" | "auto"
- * - paused: boolean
- * - color: custom color tint (optional)
+ * Official Libraries.dev ThinkingOrb Adapter with full safety normalization
  */
 export function ThinkingOrb({
   state = 'working',
@@ -23,6 +63,15 @@ export function ThinkingOrb({
   className = '',
   style = {},
 }) {
+  // Normalize state to valid library preset
+  let normalizedState = (typeof state === 'string' ? state.toLowerCase() : 'working');
+  if (STATE_MAPPINGS[normalizedState]) {
+    normalizedState = STATE_MAPPINGS[normalizedState];
+  }
+  if (!VALID_STATES.includes(normalizedState)) {
+    normalizedState = 'working';
+  }
+
   // Translate dark boolean to the library's theme prop ("dark" | "light" | "auto")
   const resolvedTheme = theme || (typeof dark === 'boolean' ? (dark ? 'dark' : 'light') : 'auto');
 
@@ -30,29 +79,46 @@ export function ThinkingOrb({
   const nativeSize = size >= 40 ? 64 : 20;
   const scale = size / nativeSize;
 
-  if (Math.abs(scale - 1) > 0.05) {
-    return (
-      <div
-        className={`relative inline-flex items-center justify-center shrink-0 select-none pointer-events-none ${className}`}
-        style={{
-          width: size,
-          height: size,
-          overflow: 'hidden',
-          ...style,
-        }}
-        title={`ThinkingOrb (${state})`}
-      >
+  return (
+    <OrbErrorBoundary>
+      {Math.abs(scale - 1) > 0.05 ? (
         <div
+          className={`relative inline-flex items-center justify-center shrink-0 select-none pointer-events-none ${className}`}
           style={{
-            transform: `scale(${scale})`,
-            transformOrigin: 'center center',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            width: size,
+            height: size,
+            overflow: 'hidden',
+            ...style,
           }}
+          title={`ThinkingOrb (${normalizedState})`}
+        >
+          <div
+            style={{
+              transform: `scale(${scale})`,
+              transformOrigin: 'center center',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <OrgThinkingOrb
+              state={normalizedState}
+              size={nativeSize}
+              theme={resolvedTheme}
+              speed={speed}
+              paused={paused}
+              color={color}
+            />
+          </div>
+        </div>
+      ) : (
+        <div
+          className={`relative inline-flex items-center justify-center shrink-0 select-none pointer-events-none ${className}`}
+          style={{ width: size, height: size, ...style }}
+          title={`ThinkingOrb (${normalizedState})`}
         >
           <OrgThinkingOrb
-            state={state}
+            state={normalizedState}
             size={nativeSize}
             theme={resolvedTheme}
             speed={speed}
@@ -60,25 +126,8 @@ export function ThinkingOrb({
             color={color}
           />
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={`relative inline-flex items-center justify-center shrink-0 select-none pointer-events-none ${className}`}
-      style={{ width: size, height: size, ...style }}
-      title={`ThinkingOrb (${state})`}
-    >
-      <OrgThinkingOrb
-        state={state}
-        size={nativeSize}
-        theme={resolvedTheme}
-        speed={speed}
-        paused={paused}
-        color={color}
-      />
-    </div>
+      )}
+    </OrbErrorBoundary>
   );
 }
 

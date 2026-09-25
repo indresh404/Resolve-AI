@@ -29,6 +29,10 @@ export default function HeroSection({ theme, onRunMorningCheck, onOpenVoiceModal
           <span className="text-neutral-600 dark:text-neutral-400 font-bold">
             Track 3: Autonomous AI Teammates
           </span>
+          <span className="text-neutral-300 dark:text-neutral-700">•</span>
+          <span className="text-neutral-700 dark:text-neutral-300 font-semibold">
+            By <strong className="text-black dark:text-white">Indresh Suresh</strong> & <strong className="text-black dark:text-white">Divya Sharma</strong>
+          </span>
         </div>
 
         <div className="flex items-center gap-2 text-xs text-neutral-700 dark:text-neutral-300">
@@ -69,8 +73,8 @@ export default function HeroSection({ theme, onRunMorningCheck, onOpenVoiceModal
               onClick={onOpenVoiceModal}
               className="px-4 py-2.5 rounded-xl bg-white hover:bg-neutral-100 text-black dark:bg-white dark:text-black dark:hover:bg-neutral-200 font-bold text-sm transition-all flex items-center gap-2 border-2 border-neutral-300 dark:border-white shadow-sm active:scale-95"
             >
-              <Volume2 className="w-4 h-4 text-[#008db8] dark:text-[#00B9F1]" />
-              <span>Voice Copilot</span>
+              <Radio className="w-4 h-4 text-[#008db8] dark:text-[#00B9F1] animate-pulse" />
+              <span>Merchant Soundbox 4G Voice Engine</span>
             </button>
           </div>
 

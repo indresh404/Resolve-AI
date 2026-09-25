@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
+import InteractiveDemoTour from './components/InteractiveDemoTour';
 import MorningCheckSimulator from './components/MorningCheckSimulator';
 import MultiAgentPipeline from './components/MultiAgentPipeline';
 import SettlementBreakdown from './components/SettlementBreakdown';
@@ -10,13 +11,11 @@ import CogneeMemoryGraph from './components/CogneeMemoryGraph';
 import WhatsAppPreviewModal from './components/WhatsAppPreviewModal';
 import SoundboxAlertModal from './components/SoundboxAlertModal';
 import LiveThinkingOrbLoader from './components/LiveThinkingOrbLoader';
-import OfflineSyncBanner from './components/OfflineSyncBanner';
 import Footer from './components/Footer';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
   const [isMorningCheckRunning, setIsMorningCheckRunning] = useState(false);
-  const [isOffline, setIsOffline] = useState(false);
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
   const [isSoundboxModalOpen, setIsSoundboxModalOpen] = useState(false);
   
@@ -68,18 +67,10 @@ export default function App() {
         theme={theme}
       />
 
-      {/* Offline Alert Banner */}
-      <OfflineSyncBanner 
-        isOffline={isOffline} 
-        onSyncNow={() => setIsOffline(false)} 
-      />
-
       {/* Capsule Glassmorphism Navbar */}
       <Navbar
         onRunMorningCheck={handleRunMorningCheck}
         isMorningCheckRunning={isMorningCheckRunning}
-        isOffline={isOffline}
-        setIsOffline={setIsOffline}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         theme={theme}
@@ -88,13 +79,25 @@ export default function App() {
       />
 
       {/* Main Single-Page App Content */}
-      <main className="flex-1 space-y-8 pt-4 pb-12">
+      <main className="flex-1 space-y-6 pt-4 pb-12">
         
         {/* Hero Section with Live Thinking Orb Playground */}
         <HeroSection 
           theme={theme}
           onRunMorningCheck={handleRunMorningCheck}
           onOpenVoiceModal={handleOpenVoice}
+        />
+
+        {/* 2-Minute Hackathon Demo Guided Tour Bar */}
+        <InteractiveDemoTour 
+          theme={theme}
+          onRunMorningCheck={handleRunMorningCheck}
+          onOpenVoice={handleOpenVoice}
+          onOpenSoundbox={() => setIsSoundboxModalOpen(true)}
+          onApproveDispute={() => {
+            const el = document.getElementById('guardrails');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
         />
 
         {/* Proactive 9:00 AM Daily Morning Check Simulation */}
@@ -105,25 +108,25 @@ export default function App() {
           onOpenSoundboxChime={() => setIsSoundboxModalOpen(true)}
         />
 
-        {/* Multi-Agent Orchestration & n8n Pipeline */}
-        <MultiAgentPipeline theme={theme} />
-
-        {/* Settlement Reconciliation Math Engine (₹2,340 Gap) */}
+        {/* Settlement Reconciliation Math Engine (₹2,340 Gap & Recovery Lifecycle) */}
         <SettlementBreakdown 
           theme={theme}
           onOpenDisputeModal={() => setIsSoundboxModalOpen(true)}
         />
 
+        {/* Guardrails & Human-in-the-Loop Risk Scorer (🟢 / 🟡 / 🔴) */}
+        <GuardrailsApproval 
+          theme={theme}
+          onOpenWhatsAppModal={() => setIsWhatsAppModalOpen(true)}
+        />
+
+        {/* Multi-Agent Orchestration & n8n Pipeline */}
+        <MultiAgentPipeline theme={theme} />
+
         {/* Sarvam AI Multilingual Voice Copilot */}
         <VoiceAssistant 
           theme={theme}
           onOpenSoundboxChime={() => setIsSoundboxModalOpen(true)}
-        />
-
-        {/* Guardrails & Human-in-the-Loop Risk Scorer */}
-        <GuardrailsApproval 
-          theme={theme}
-          onOpenWhatsAppModal={() => setIsWhatsAppModalOpen(true)}
         />
 
         {/* Cognee Knowledge Graph & Persistent Memory */}
