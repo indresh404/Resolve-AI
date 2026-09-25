@@ -1,54 +1,85 @@
 // Sarvam AI Text-to-Speech (TTS) Service
-// Powered by Sarvam AI Bulbul v3 Indian Indic Voice Models
+// Powered by Sarvam AI Bulbul v3 Indian Indic Voice Models (Ritu - Professional Voice)
 
 const SARVAM_API_KEY = import.meta.env.VITE_SARVAM_API_KEY || "";
 const SARVAM_TTS_URL = "https://api.sarvam.ai/text-to-speech";
 
 export const SUPPORTED_LANGUAGES = [
-  { code: 'hi-IN', name: 'Hindi', native: 'हिन्दी', flag: '🇮🇳', defaultSpeaker: 'priya' },
-  { code: 'en-IN', name: 'English (India)', native: 'English', flag: '🇬🇧', defaultSpeaker: 'priya' },
-  { code: 'mr-IN', name: 'Marathi', native: 'मराठी', flag: '🇮🇳', defaultSpeaker: 'priya' },
-  { code: 'gu-IN', name: 'Gujarati', native: 'ગુજરાતી', flag: '🇮🇳', defaultSpeaker: 'priya' },
-  { code: 'ta-IN', name: 'Tamil', native: 'தமிழ்', flag: '🇮🇳', defaultSpeaker: 'priya' },
-  { code: 'te-IN', name: 'Telugu', native: 'తెలుగు', flag: '🇮🇳', defaultSpeaker: 'priya' },
-  { code: 'kn-IN', name: 'Kannada', native: 'ಕನ್ನಡ', flag: '🇮🇳', defaultSpeaker: 'priya' },
-  { code: 'bn-IN', name: 'Bengali', native: 'বাংলা', flag: '🇮🇳', defaultSpeaker: 'priya' },
-  { code: 'ml-IN', name: 'Malayalam', native: 'മലയാളം', flag: '🇮🇳', defaultSpeaker: 'priya' },
-  { code: 'pa-IN', name: 'Punjabi', native: 'ਪੰਜਾਬੀ', flag: '🇮🇳', defaultSpeaker: 'priya' },
-  { code: 'od-IN', name: 'Odia', native: 'ଓଡ଼ିଆ', flag: '🇮🇳', defaultSpeaker: 'priya' }
+  { code: 'hi-IN', name: 'Hindi', native: 'हिन्दी', flag: '🇮🇳' },
+  { code: 'en-IN', name: 'English (India)', native: 'English', flag: '🇬🇧' },
+  { code: 'mr-IN', name: 'Marathi', native: 'मराठी', flag: '🇮🇳' },
+  { code: 'gu-IN', name: 'Gujarati', native: 'ગુજરાતી', flag: '🇮🇳' },
+  { code: 'ta-IN', name: 'Tamil', native: 'தமிழ்', flag: '🇮🇳' },
+  { code: 'te-IN', name: 'Telugu', native: 'తెలుగు', flag: '🇮🇳' },
+  { code: 'kn-IN', name: 'Kannada', native: 'ಕನ್ನಡ', flag: '🇮🇳' },
+  { code: 'bn-IN', name: 'Bengali', native: 'বাংলা', flag: '🇮🇳' },
+  { code: 'ml-IN', name: 'Malayalam', native: 'മലയാളം', flag: '🇮🇳' },
+  { code: 'pa-IN', name: 'Punjabi', native: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
+  { code: 'od-IN', name: 'Odia', native: 'ଓଡ଼ିଆ', flag: '🇮🇳' }
 ];
 
-export const FEMALE_SPEAKERS = [
-  { id: 'priya', name: 'Priya (Clear Female)', gender: 'Female' },
-  { id: 'kavya', name: 'Kavya (Soft Female)', gender: 'Female' },
-  { id: 'ritu', name: 'Ritu (Professional)', gender: 'Female' },
-  { id: 'shreya', name: 'Shreya (Expressive)', gender: 'Female' },
-  { id: 'simran', name: 'Simran (Conversational)', gender: 'Female' },
-  { id: 'shubh', name: 'Shubh (Male Anchor)', gender: 'Male' }
-];
+// Single dedicated voice profile: Ritu (Professional Indic Voice)
+export const DEDICATED_SPEAKER = 'ritu';
 
 // Audio in-memory cache to avoid duplicate API calls
 const audioCache = new Map();
 let currentAudioInstance = null;
+let currentAbortController = null;
+let globalPlaybackId = 0;
+
+/**
+ * Stops any currently playing audio and aborts pending network fetches
+ */
+export function stopSarvamAudio() {
+  globalPlaybackId++; // Invalidate all pending asynchronous requests
+
+  if (currentAbortController) {
+    try {
+      currentAbortController.abort();
+    } catch (e) {}
+    currentAbortController = null;
+  }
+
+  if (currentAudioInstance) {
+    try {
+      currentAudioInstance.pause();
+      currentAudioInstance.currentTime = 0;
+      currentAudioInstance.src = "";
+    } catch (e) {}
+    currentAudioInstance = null;
+  }
+
+  if ('speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {}
+  }
+}
 
 /**
  * Synthesizes speech using Sarvam AI Bulbul TTS API
  * @param {string} text - Text to synthesize
  * @param {string} languageCode - BCP-47 language code (e.g. 'hi-IN', 'en-IN')
- * @param {string} speaker - Voice model speaker id
+ * @param {number} reqId - Monotonic request ID for race condition protection
  * @returns {Promise<string>} - Base64 audio data URL
  */
-export async function synthesizeSarvamSpeech(text, languageCode = 'hi-IN', speaker = 'priya') {
+export async function synthesizeSarvamSpeech(text, languageCode = 'hi-IN', reqId) {
   if (!text || !text.trim()) return null;
 
-  const cacheKey = `${languageCode}_${speaker}_${text.trim()}`;
+  const cacheKey = `${languageCode}_ritu_${text.trim()}`;
   if (audioCache.has(cacheKey)) {
     return audioCache.get(cacheKey);
   }
 
+  if (currentAbortController) {
+    try { currentAbortController.abort(); } catch (e) {}
+  }
+  currentAbortController = new AbortController();
+
   try {
     const response = await fetch(SARVAM_TTS_URL, {
       method: 'POST',
+      signal: currentAbortController.signal,
       headers: {
         'api-subscription-key': SARVAM_API_KEY,
         'Content-Type': 'application/json'
@@ -56,10 +87,12 @@ export async function synthesizeSarvamSpeech(text, languageCode = 'hi-IN', speak
       body: JSON.stringify({
         text: text.trim(),
         language_code: languageCode,
-        speaker: speaker || 'priya',
+        speaker: DEDICATED_SPEAKER,
         model: 'bulbul:v3'
       })
     });
+
+    if (reqId !== globalPlaybackId) return null;
 
     if (!response.ok) {
       const errText = await response.text();
@@ -68,6 +101,8 @@ export async function synthesizeSarvamSpeech(text, languageCode = 'hi-IN', speak
     }
 
     const data = await response.json();
+    if (reqId !== globalPlaybackId) return null;
+
     if (data.audios && data.audios.length > 0) {
       const audioBase64 = data.audios[0];
       const audioUrl = `data:audio/wav;base64,${audioBase64}`;
@@ -77,91 +112,92 @@ export async function synthesizeSarvamSpeech(text, languageCode = 'hi-IN', speak
       throw new Error('No audio returned by Sarvam TTS');
     }
   } catch (error) {
+    if (error.name === 'AbortError') return null;
     console.error('Failed to synthesize with Sarvam AI:', error);
     throw error;
   }
 }
 
 /**
- * Stops any currently playing audio
- */
-export function stopSarvamAudio() {
-  if (currentAudioInstance) {
-    try {
-      currentAudioInstance.pause();
-      currentAudioInstance.currentTime = 0;
-    } catch (e) {}
-    currentAudioInstance = null;
-  }
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-  }
-}
-
-/**
- * Plays audio via Sarvam AI with automatic fallback to Web Speech Synthesis
+ * Plays audio via Sarvam AI with race-condition prevention & fallback
  * @param {string} text - Text to speak
- * @param {Object} options - { languageCode, speaker, onStart, onEnd, onError }
+ * @param {Object} options - { languageCode, onStart, onEnd, onError }
  */
 export async function playSarvamSpeech(text, options = {}) {
   const {
     languageCode = 'en-IN',
-    speaker = 'priya',
     onStart = () => {},
     onEnd = () => {},
     onError = () => {}
   } = options;
 
+  // 1. Stop any prior audio and acquire new exclusive token
   stopSarvamAudio();
+  const thisPlaybackId = globalPlaybackId;
 
   try {
-    onStart();
-    const audioUrl = await synthesizeSarvamSpeech(text, languageCode, speaker);
+    const audioUrl = await synthesizeSarvamSpeech(text, languageCode, thisPlaybackId);
+    
+    // Check if superseded while fetching
+    if (thisPlaybackId !== globalPlaybackId) return;
+
     if (!audioUrl) throw new Error('Empty audio received');
 
+    onStart();
     const audio = new Audio(audioUrl);
     currentAudioInstance = audio;
 
     audio.onended = () => {
-      currentAudioInstance = null;
-      onEnd();
+      if (thisPlaybackId === globalPlaybackId) {
+        currentAudioInstance = null;
+        onEnd();
+      }
     };
 
     audio.onerror = (e) => {
-      console.warn('HTML Audio playback failed, falling back to Web Speech Synthesis:', e);
-      fallbackWebSpeech(text, languageCode, onEnd);
+      if (thisPlaybackId === globalPlaybackId) {
+        console.warn('HTML Audio playback error, using Web Speech fallback:', e);
+        fallbackWebSpeech(text, languageCode, thisPlaybackId, onEnd);
+      }
     };
 
     await audio.play();
   } catch (err) {
-    console.warn('Sarvam TTS network failed, using Web Speech API fallback:', err);
-    fallbackWebSpeech(text, languageCode, onEnd);
+    if (thisPlaybackId === globalPlaybackId) {
+      if (err.name !== 'AbortError') {
+        console.warn('Sarvam TTS unavailable, activating Web Speech fallback:', err);
+        fallbackWebSpeech(text, languageCode, thisPlaybackId, onEnd);
+      }
+    }
   }
 }
 
 /**
- * Web Speech Synthesis fallback
+ * Web Speech Synthesis fallback (strictly single-instance)
  */
-function fallbackWebSpeech(text, languageCode, onEnd) {
-  if (!('speechSynthesis' in window)) {
+function fallbackWebSpeech(text, languageCode, reqId, onEnd) {
+  if (!('speechSynthesis' in window) || reqId !== globalPlaybackId) {
     if (onEnd) onEnd();
     return;
   }
 
-  window.speechSynthesis.cancel();
+  try {
+    window.speechSynthesis.cancel();
+  } catch (e) {}
+
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = languageCode || 'en-US';
-  utterance.pitch = 1.18;
+  utterance.pitch = 1.15;
   utterance.rate = 1.0;
 
   const voices = window.speechSynthesis.getVoices();
   const femaleVoice = voices.find(v => 
-    (v.name.toLowerCase().includes('zira') || 
+    (v.name.toLowerCase().includes('ritu') ||
+     v.name.toLowerCase().includes('zira') || 
      v.name.toLowerCase().includes('samantha') || 
      v.name.toLowerCase().includes('victoria') || 
      v.name.toLowerCase().includes('jenny') || 
      v.name.toLowerCase().includes('aria') || 
-     v.name.toLowerCase().includes('priya') ||
      v.name.toLowerCase().includes('female') ||
      v.name.toLowerCase().includes('google')) && 
     (v.lang.startsWith(languageCode.split('-')[0]) || v.lang.startsWith('en'))
@@ -172,10 +208,10 @@ function fallbackWebSpeech(text, languageCode, onEnd) {
   }
 
   utterance.onend = () => {
-    if (onEnd) onEnd();
+    if (reqId === globalPlaybackId && onEnd) onEnd();
   };
   utterance.onerror = () => {
-    if (onEnd) onEnd();
+    if (reqId === globalPlaybackId && onEnd) onEnd();
   };
 
   window.speechSynthesis.speak(utterance);

@@ -14,21 +14,19 @@ import {
   ArrowRight,
   User,
   Square,
-  ChevronDown,
-  Volume1,
-  Cpu
+  Cpu,
+  Headphones
 } from 'lucide-react';
 import { multilingualVoiceScenarios } from '../data/mockData';
 import { 
   SUPPORTED_LANGUAGES, 
-  FEMALE_SPEAKERS, 
+  DEDICATED_SPEAKER,
   playSarvamSpeech, 
   stopSarvamAudio 
 } from '../services/sarvamTts';
 
 export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
   const [selectedLangCode, setSelectedLangCode] = useState('hi-IN');
-  const [selectedSpeaker, setSelectedSpeaker] = useState('priya');
   
   const currentScenarios = multilingualVoiceScenarios[selectedLangCode] || multilingualVoiceScenarios['hi-IN'];
   const [activeScenario, setActiveScenario] = useState(currentScenarios[0]);
@@ -37,7 +35,6 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
   const [customQuery, setCustomQuery] = useState('');
   const [streamingText, setStreamingText] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
-  const [ttsEngineStatus, setTtsEngineStatus] = useState('Sarvam AI Bulbul v3');
 
   const [chatLog, setChatLog] = useState([
     {
@@ -56,8 +53,19 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
   ]);
 
   const streamIntervalRef = useRef(null);
+  const timeoutsRef = useRef([]);
   const messagesContainerRef = useRef(null);
   const prevTriggerCount = useRef(triggerDemoCount);
+
+  // Clear all pending timeouts and streaming intervals to eliminate glitches & double audio
+  const clearAllPendingTimers = () => {
+    timeoutsRef.current.forEach(t => clearTimeout(t));
+    timeoutsRef.current = [];
+    if (streamIntervalRef.current) {
+      clearInterval(streamIntervalRef.current);
+      streamIntervalRef.current = null;
+    }
+  };
 
   // Safely scroll internal chat container without touching window scroll
   const scrollChatToBottom = () => {
@@ -70,8 +78,9 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
     scrollChatToBottom();
   }, [chatLog, streamingText]);
 
-  // When language changes, update scenarios and initialize fresh prompt
+  // When language changes, update scenarios and re-initialize chat cleanly
   const handleLanguageChange = (newLangCode) => {
+    clearAllPendingTimers();
     stopCurrentAudio();
     setSelectedLangCode(newLangCode);
     const newScenarios = multilingualVoiceScenarios[newLangCode] || multilingualVoiceScenarios['hi-IN'];
@@ -105,14 +114,14 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (streamIntervalRef.current) clearInterval(streamIntervalRef.current);
+      clearAllPendingTimers();
       stopSarvamAudio();
     };
   }, []);
 
   const stopCurrentAudio = () => {
+    clearAllPendingTimers();
     stopSarvamAudio();
-    if (streamIntervalRef.current) clearInterval(streamIntervalRef.current);
     setIsPlayingAudio(false);
     setIsStreaming(false);
     setVoiceState('idle');
@@ -124,7 +133,6 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
     
     await playSarvamSpeech(text, {
       languageCode: selectedLangCode,
-      speaker: selectedSpeaker,
       onStart: () => {
         setIsPlayingAudio(true);
         setVoiceState('speaking');
@@ -144,11 +152,12 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
 
   // Progressive streaming typewriter function (like ChatGPT)
   const streamAIResponse = (fullText, sc) => {
+    clearAllPendingTimers();
     setIsStreaming(true);
     setStreamingText('');
     setVoiceState('speaking');
     
-    // Play speech concurrently via Sarvam AI
+    // Play speech concurrently via Sarvam AI (Ritu voice)
     speakWithSarvam(fullText, () => {
       setIsStreaming(false);
       setVoiceState('idle');
@@ -157,15 +166,14 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
     let index = 0;
     const words = fullText.split(' ');
     
-    if (streamIntervalRef.current) clearInterval(streamIntervalRef.current);
-    
     streamIntervalRef.current = setInterval(() => {
       if (index < words.length) {
         const currentSlice = words.slice(0, index + 1).join(' ');
         setStreamingText(currentSlice);
         index++;
       } else {
-        clearInterval(streamIntervalRef.current);
+        if (streamIntervalRef.current) clearInterval(streamIntervalRef.current);
+        streamIntervalRef.current = null;
         setIsStreaming(false);
         setChatLog((prev) => [
           ...prev,
@@ -184,13 +192,14 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
 
   // Full automatic voice demo simulation
   const runAutomaticVoiceDemo = (sc) => {
+    clearAllPendingTimers();
     stopCurrentAudio();
     const scenarioToUse = sc || currentScenarios[0];
     setActiveScenario(scenarioToUse);
     setVoiceState('listening');
 
     // Add User query to chat after brief listening simulation
-    setTimeout(() => {
+    const t1 = setTimeout(() => {
       setChatLog((prev) => [
         ...prev,
         {
@@ -204,12 +213,14 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
       // Transition to Thinking state for 0.6s
       setVoiceState('thinking');
 
-      setTimeout(() => {
+      const t2 = setTimeout(() => {
         // Transition to Speaking state with real-time ChatGPT streaming & Sarvam TTS
         streamAIResponse(scenarioToUse.responseAudioText, scenarioToUse);
       }, 600);
+      timeoutsRef.current.push(t2);
 
-    }, 1000);
+    }, 900);
+    timeoutsRef.current.push(t1);
   };
 
   const handleCustomSubmit = (e) => {
@@ -218,6 +229,7 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
 
     const userMsg = customQuery;
     setCustomQuery('');
+    clearAllPendingTimers();
     stopCurrentAudio();
 
     // 1. Add user query
@@ -234,7 +246,7 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
     // 2. Set thinking
     setVoiceState('thinking');
 
-    setTimeout(() => {
+    const t1 = setTimeout(() => {
       let aiReply = '';
       if (selectedLangCode === 'hi-IN') {
         aiReply = `आपके प्रश्न "${userMsg}" का विश्लेषण: कल के सेटलमेंट में ₹2,340 का अंतर है। ₹640 का क्लेम स्वतः दर्ज हो चुका है, और ₹1,500 के रिफंड विवाद के लिए आपकी एक-टैप स्वीकृति आवश्यक है।`;
@@ -251,19 +263,20 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
       }
       streamAIResponse(aiReply, { orbState: 'solving' });
     }, 700);
+    timeoutsRef.current.push(t1);
   };
 
-  // Dynamic center text for the circular letter loader orb
+  // Center text for the circular letter loader orb (always in clean English)
   const getOrbDisplayText = () => {
     switch (voiceState) {
       case 'listening':
-        return selectedLangCode === 'hi-IN' ? 'सुन रहा हूँ...' : 'Listening...';
+        return 'Listening...';
       case 'thinking':
-        return selectedLangCode === 'hi-IN' ? 'सोच रहा हूँ...' : 'Thinking...';
+        return 'Thinking...';
       case 'speaking':
-        return selectedLangCode === 'hi-IN' ? 'बोल रहा हूँ...' : 'Speaking...';
+        return 'Speaking...';
       default:
-        return isPlayingAudio ? 'Speaking...' : (selectedLangCode === 'hi-IN' ? 'तैयार...' : 'Ready...');
+        return isPlayingAudio ? 'Speaking...' : 'Ready...';
     }
   };
 
@@ -308,7 +321,7 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
         </div>
 
         {/* =========================================================================
-            TOP LANGUAGE & VOICE MODEL SELECTOR BAR (11 Indic Languages)
+            TOP LANGUAGE SELECTOR BAR (11 Indic Languages) & DEDICATED RITU VOICE
            ========================================================================= */}
         <div className="mt-4 p-3.5 rounded-2xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-inner">
           
@@ -341,20 +354,12 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
             </div>
           </div>
 
-          {/* Voice Profile & Engine Tag */}
+          {/* Dedicated Voice Badge: Ritu (Professional Female Voice) */}
           <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
-            <span className="text-[11px] font-bold text-neutral-500">Voice:</span>
-            <select
-              value={selectedSpeaker}
-              onChange={(e) => setSelectedSpeaker(e.target.value)}
-              className="bg-white dark:bg-black text-black dark:text-white text-xs font-bold px-2.5 py-1 rounded-xl border border-neutral-300 dark:border-neutral-800 focus:outline-none focus:border-[#00B9F1]"
-            >
-              {FEMALE_SPEAKERS.map((spk) => (
-                <option key={spk.id} value={spk.id}>
-                  {spk.name}
-                </option>
-              ))}
-            </select>
+            <div className="px-3 py-1 rounded-xl bg-white dark:bg-black text-black dark:text-white border border-neutral-300 dark:border-neutral-800 text-xs font-bold flex items-center gap-1.5 shadow-sm">
+              <Headphones className="w-3.5 h-3.5 text-[#00B9F1]" />
+              <span>Voice: <strong className="text-[#008db8] dark:text-[#00B9F1]">Ritu (Professional)</strong></span>
+            </div>
           </div>
 
         </div>
@@ -371,7 +376,7 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
           <div className="w-full flex items-center justify-between pb-3 border-b border-white/10 text-white text-xs font-mono mb-2 z-10">
             <span className="flex items-center gap-1.5 font-bold text-[#00B9F1]">
               <Sparkles className="w-4 h-4" />
-              <span>Sarvam AI Bulbul v3 ({activeLangObj.name} • {selectedSpeaker})</span>
+              <span>Sarvam AI Bulbul v3 ({activeLangObj.name} • Ritu)</span>
             </span>
 
             <div className="flex items-center gap-2">
@@ -546,7 +551,7 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
                       <span className="text-[10px] font-bold text-[#008db8] dark:text-[#00B9F1]">
                         {msg.sender === 'user' 
                           ? `Merchant (${activeLangObj.name} Inquiry):` 
-                          : `Resolve AI (Sarvam ${activeLangObj.name} Speech):`}
+                          : `Resolve AI (Sarvam Ritu Speech):`}
                       </span>
                       <span className="text-[10px] font-mono text-neutral-400">
                         {msg.time || 'Just now'}
@@ -564,7 +569,7 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
                           <Volume2 className="w-3.5 h-3.5" />
                           <span>Replay Sarvam Voice</span>
                         </button>
-                        <span className="font-mono text-neutral-400">Sarvam Bulbul v3</span>
+                        <span className="font-mono text-neutral-400">Sarvam Bulbul v3 (Ritu)</span>
                       </div>
                     )}
                   </div>
@@ -588,7 +593,7 @@ export default function VoiceAssistant({ theme, triggerDemoCount = 0 }) {
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <span className="text-[10px] font-bold text-[#008db8] dark:text-[#00B9F1] flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-[#00B9F1] animate-ping" />
-                        Sarvam AI Synthesizing Speech...
+                        Sarvam AI Synthesizing Speech (Ritu)...
                       </span>
                     </div>
 

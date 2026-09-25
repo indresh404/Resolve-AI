@@ -99,7 +99,6 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
       const textToSpeak = "Good morning Divya ji. Out of ₹10,000 in yesterday's settlement, a ₹2,340 discrepancy was detected. A ₹640 claim has been submitted automatically. The ₹1,500 refund dispute is awaiting your 1-tap approval.";
       await playSarvamSpeech(textToSpeak, {
         languageCode: 'en-IN',
-        speaker: 'priya',
         onStart: () => setIsPlayingAudio(true),
         onEnd: () => setIsPlayingAudio(false),
         onError: () => setIsPlayingAudio(false)
