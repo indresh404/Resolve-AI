@@ -7,196 +7,225 @@ import {
   Volume2, 
   Clock, 
   Check, 
-  X,
-  VolumeX
+  X, 
+  VolumeX, 
+  Sparkles, 
+  ArrowRight, 
+  Workflow 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { playSarvamSpeech, stopSarvamAudio } from '../services/sarvamTts';
 
 export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, onOpenSoundboxChime }) {
-  const [currentStep, setCurrentStep] = useState(isRunning ? 1 : 4);
+  const [currentStep, setCurrentStep] = useState(4);
+  const [localRunning, setLocalRunning] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [approvedChargeback, setApprovedChargeback] = useState(null);
 
   const steps = [
     {
       num: 1,
-      title: "9:00 AM Trigger & Fetch",
-      desc: "Pulled 50 txns (₹10,000 gross) from Gateway Adapter via n8n.",
+      title: "09:00 AM Cron & Ingestion",
+      desc: "Pulled 50 merchant txns (₹10,000 gross) via n8n webhook trigger.",
       orbState: "breathing",
-      agent: "Monitor Agent"
+      agent: "Monitor Agent",
+      time: "09:00:01 IST"
     },
     {
       num: 2,
-      title: "Reconciliation Engine",
-      desc: "Expected ₹9,800 vs Actual ₹7,460. ₹2,340 gap parsed.",
+      title: "Deterministic Reconciler",
+      desc: "Expected ₹9,800 vs Actual ₹7,460. Net ₹2,340 discrepancy detected.",
       orbState: "searching",
-      agent: "Reconciler Agent"
+      agent: "Reconciler Agent",
+      time: "09:00:03 IST"
     },
     {
       num: 3,
-      title: "Risk & Cognee Graph",
-      desc: "Checked 30-day velocity. Flagged repeat refund patterns.",
+      title: "Risk Scoring & Cognee Graph",
+      desc: "Checked 30-day velocity. Customer profiles verified with zero fraud flags.",
       orbState: "weaving",
-      agent: "Fraud Agent"
+      agent: "Fraud Agent",
+      time: "09:00:05 IST"
     },
     {
       num: 4,
-      title: "Autonomous Action",
-      desc: "Auto-filed ₹2,140 claims; queued Hindi voice briefing.",
+      title: "Autonomous Claim Dispatch",
+      desc: "Auto-dispatched ₹640 claim; queued ₹1,500 held refund for merchant approval.",
       orbState: "solving",
-      agent: "Collector + Critic"
+      agent: "Collector + Critic",
+      time: "09:00:07 IST"
     }
   ];
 
+  // When external isRunning or internal run is triggered
+  const startSimulation = () => {
+    setLocalRunning(true);
+    setCurrentStep(1);
+
+    const t1 = setTimeout(() => setCurrentStep(2), 1000);
+    const t2 = setTimeout(() => setCurrentStep(3), 2000);
+    const t3 = setTimeout(() => {
+      setCurrentStep(4);
+      setLocalRunning(false);
+      try {
+        confetti({
+          particleCount: 45,
+          spread: 65,
+          origin: { y: 0.6 },
+          colors: ['#00B9F1', '#000000', '#ffffff']
+        });
+      } catch (e) {}
+    }, 3200);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  };
+
   useEffect(() => {
     if (isRunning) {
-      setCurrentStep(1);
-      const t1 = setTimeout(() => setCurrentStep(2), 1200);
-      const t2 = setTimeout(() => setCurrentStep(3), 2400);
-      const t3 = setTimeout(() => {
-        setCurrentStep(4);
-        try {
-          confetti({
-            particleCount: 40,
-            spread: 60,
-            origin: { y: 0.8 },
-            colors: ['#00B9F1', '#000000', '#ffffff']
-          });
-        } catch (e) {}
-      }, 3800);
-
-      return () => {
-        clearTimeout(t1);
-        clearTimeout(t2);
-        clearTimeout(t3);
-      };
+      startSimulation();
     }
   }, [isRunning]);
 
-  const toggleAudio = () => {
-    setIsPlayingAudio(!isPlayingAudio);
-    if (!isPlayingAudio && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance("Namaste Sharma ji. Kal kul 10,000 rupaye ke transactions hue the. 2,340 rupaye ka settlement mismatch paya gaya hai. 1,500 ka refund dispute aur 640 ka failed claim darj kar diya gaya hai.");
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      utterance.onend = () => setIsPlayingAudio(false);
-      window.speechSynthesis.speak(utterance);
-    } else if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
+  const toggleAudio = async () => {
+    if (isPlayingAudio) {
+      stopSarvamAudio();
+      setIsPlayingAudio(false);
+    } else {
+      setIsPlayingAudio(true);
+      const textToSpeak = "Good morning Divya ji. Out of ₹10,000 in yesterday's settlement, a ₹2,340 discrepancy was detected. A ₹640 claim has been submitted automatically. The ₹1,500 refund dispute is awaiting your 1-tap approval.";
+      await playSarvamSpeech(textToSpeak, {
+        languageCode: 'en-IN',
+        speaker: 'priya',
+        onStart: () => setIsPlayingAudio(true),
+        onEnd: () => setIsPlayingAudio(false),
+        onError: () => setIsPlayingAudio(false)
+      });
     }
   };
 
+  const activeExecution = isRunning || localRunning;
+
   return (
     <section id="morning-check" className="py-3 px-4 max-w-5xl mx-auto w-full">
-      <div className="bw-card p-5 sm:p-6">
+      <div className="bw-card p-5 sm:p-7">
         
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-neutral-200 dark:border-neutral-800">
           <div>
             <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/30">
               <Clock className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1]" />
-              Proactive Daily Audit
+              Demo Step 01: Proactive 9:00 AM Audit
             </div>
             <h2 className="text-2xl font-black text-black dark:text-white">
-              9:00 AM Morning Audit
+              9:00 AM Proactive Morning Audit
             </h2>
             <p className="text-neutral-600 dark:text-neutral-400 text-xs sm:text-sm mt-0.5 max-w-xl font-medium">
-              Runs automatically every morning via n8n: reviews settlements, files routine claims, and leaves a voice briefing.
+              Runs automatically every morning: ingests settlement files, reconciles accounting math, and executes routine recovery claims.
             </p>
           </div>
 
           {/* Trigger button */}
           <div className="flex items-center gap-3">
             <button
-              onClick={onRunCheck}
-              disabled={isRunning}
+              onClick={startSimulation}
+              disabled={activeExecution}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-black flex items-center gap-2 transition-all active:scale-95 ${
-                isRunning
+                activeExecution
                   ? 'bg-neutral-800 text-neutral-400 cursor-wait'
                   : 'electric-glow-btn'
               }`}
             >
-              {isRunning ? (
+              {activeExecution ? (
                 <>
-                  <ThinkingOrb state="working" size={16} dark={true} />
-                  <span>Auditing Books...</span>
+                  <ThinkingOrb state="working" size={16} speed={2.0} dark={true} />
+                  <span>Auditing Step 0{currentStep}...</span>
                 </>
               ) : (
                 <>
                   <Play className="w-4 h-4 fill-black text-black" />
-                  <span>Run Morning Audit</span>
+                  <span>Simulate 9:00 AM Audit</span>
                 </>
               )}
             </button>
           </div>
         </div>
 
-        {/* 4-Step Animated Pipeline Visualizer */}
+        {/* 4-Step Animated Pipeline Visualizer Running Inside Card */}
         <div className="my-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {steps.map((s) => {
-            const isStepActive = isRunning && currentStep === s.num;
-            const isStepDone = currentStep > s.num || (!isRunning && currentStep === 4);
+            const isStepActive = activeExecution && currentStep === s.num;
+            const isStepDone = currentStep > s.num || (!activeExecution && currentStep === 4);
             return (
               <div
                 key={s.num}
-                className={`rounded-2xl p-3.5 border-2 transition-all duration-300 relative overflow-hidden ${
+                className={`rounded-2xl p-4 border-2 transition-all duration-300 relative overflow-hidden flex flex-col justify-between ${
                   isStepActive
-                    ? 'border-[#00B9F1] bg-[#00B9F1]/5 shadow-[0_0_15px_rgba(0,185,241,0.25)] scale-[1.02]'
+                    ? 'border-[#00B9F1] bg-[#00B9F1]/10 shadow-[0_0_20px_rgba(0,185,241,0.35)] scale-[1.03] ring-2 ring-[#00B9F1]'
                     : isStepDone
-                    ? 'border-black dark:border-neutral-700 bw-inset'
-                    : 'border-neutral-200 dark:border-neutral-800 bw-inset opacity-70'
+                    ? 'border-neutral-300 dark:border-neutral-700 bg-white dark:bg-black'
+                    : 'border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 opacity-60'
                 }`}
               >
                 {/* Step Header */}
-                <div className="flex items-center justify-between mb-2.5">
-                  <div className="flex items-center gap-2">
-                    <ThinkingOrb 
-                      state={isStepActive ? "working" : s.orbState} 
-                      size={20} 
-                      speed={isStepActive ? 1.5 : 0.8}
-                      dark={theme === 'dark'}
-                    />
-                    <span className="text-[10px] font-mono font-bold text-neutral-500">
-                      Step 0{s.num}
-                    </span>
+                <div>
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-2">
+                      <ThinkingOrb 
+                        state={isStepActive ? "working" : s.orbState} 
+                        size={22} 
+                        speed={isStepActive ? 2.2 : 0.8}
+                        dark={theme === 'dark'}
+                      />
+                      <span className="text-[10px] font-mono font-bold text-neutral-500">
+                        Step 0{s.num}
+                      </span>
+                    </div>
+
+                    {isStepDone ? (
+                      <span className="p-1 rounded-full bg-black text-[#00B9F1] dark:bg-[#00B9F1] dark:text-black">
+                        <Check className="w-3 h-3 stroke-[3]" />
+                      </span>
+                    ) : isStepActive ? (
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#00B9F1] animate-ping" />
+                    ) : null}
                   </div>
-                  {isStepDone ? (
-                    <span className="p-0.5 rounded-full bg-black text-[#00B9F1] dark:bg-[#00B9F1] dark:text-black">
-                      <Check className="w-3 h-3 stroke-[3]" />
-                    </span>
-                  ) : isStepActive ? (
-                    <span className="w-2 h-2 rounded-full bg-[#00B9F1] animate-ping" />
-                  ) : null}
+
+                  <div className="text-[11px] font-black text-[#00B9F1] mb-0.5">
+                    {s.agent}
+                  </div>
+                  <h4 className="text-xs sm:text-sm font-black text-black dark:text-white mb-1">
+                    {s.title}
+                  </h4>
+                  <p className="text-[11px] text-neutral-600 dark:text-neutral-400 font-medium leading-snug">
+                    {s.desc}
+                  </p>
                 </div>
 
-                <div className="text-[11px] font-black text-[#00B9F1] mb-0.5">
-                  {s.agent}
+                <div className="pt-2 mt-2 border-t border-neutral-200 dark:border-neutral-800 text-[10px] font-mono text-neutral-400">
+                  {s.time}
                 </div>
-                <h4 className="text-xs sm:text-sm font-black text-black dark:text-white mb-1">
-                  {s.title}
-                </h4>
-                <p className="text-[11px] text-neutral-600 dark:text-neutral-400 font-medium leading-snug">
-                  {s.desc}
-                </p>
               </div>
             );
           })}
         </div>
 
-        {/* Morning Audit Output Results */}
+        {/* Morning Audit Output Results (English Briefing + Decision Card) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-800">
           
-          {/* Left: Sarvam AI Voice Note Card */}
+          {/* Left: English Voice Briefing Card */}
           <div className="lg:col-span-6 bw-inset p-4 border border-neutral-300 dark:border-neutral-800">
             <div className="flex items-center justify-between mb-2.5">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-[#00B9F1]/15 text-[#008db8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] border border-[#00B9F1]/30">
+                <div className="p-1.5 rounded-lg bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] border border-[#00B9F1]/30">
                   <Volume2 className="w-3.5 h-3.5 animate-pulse" />
                 </div>
                 <div>
                   <h3 className="text-xs sm:text-sm font-black text-black dark:text-white flex items-center gap-1.5">
-                    Merchant Soundbox 4G Voice Briefing <span className="text-[10px] px-2 py-0.2 rounded-full bg-[#00B9F1] text-black font-black">Hindi (4G Active)</span>
+                    Soundbox 4G Voice Briefing <span className="text-[10px] px-2 py-0.2 rounded-full bg-[#00B9F1] text-black font-black">English Audio</span>
                   </h3>
                 </div>
               </div>
@@ -223,13 +252,13 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
             {/* Spoken Text Quote */}
             <div className="p-3 rounded-xl bg-white dark:bg-black border border-neutral-300 dark:border-neutral-800 text-xs text-neutral-800 dark:text-neutral-200 leading-snug font-sans">
               <p className="italic font-medium">
-                "नमस्ते शर्मा जी। कल के ₹10,000 में ₹2,340 कम आए थे। ₹1,500 रिफंड और ₹640 क्लेम दर्ज कर दिए हैं। ₹5,400 चार्जबैक हेतु निर्णय दें।"
+                "Good morning Divya ji. Out of ₹10,000 in yesterday's settlement, ₹2,340 is missing. I have submitted the ₹640 failed debit claim automatically. The ₹1,500 refund dispute is awaiting your approval."
               </p>
             </div>
 
             {/* Soundbox Sound Wave Visualizer */}
             <div className="mt-2.5 pt-2 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between text-[10px] text-neutral-500">
-              <span className="font-mono text-[#008db8] dark:text-[#00B9F1] font-bold">Sarvam Indic TTS (14s)</span>
+              <span className="font-mono text-[#008db8] dark:text-[#00B9F1] font-bold">English Speech Synthesis (12s)</span>
               <div className="flex items-end gap-1 h-4">
                 {[4, 12, 18, 24, 14, 8, 22, 16, 10, 20, 14, 6].map((h, i) => (
                   <div
@@ -244,7 +273,7 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
             </div>
           </div>
 
-          {/* Right: Today's Action Queue & Merchant Approval Card */}
+          {/* Right: Decision Card */}
           <div className="lg:col-span-6 bw-inset p-4 border border-neutral-300 dark:border-neutral-800">
             <div className="flex items-center justify-between mb-2.5">
               <div className="flex items-center gap-1.5">
@@ -254,7 +283,7 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
                 </h3>
               </div>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] font-black border border-[#00B9F1]/40">
-                &gt; ₹5,000
+                &gt; ₹1,000
               </span>
             </div>
 
@@ -262,11 +291,11 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <div className="text-xs font-black text-black dark:text-white flex items-center gap-1.5">
-                    <span>Dispute: Rajesh Kumar</span>
-                    <span className="text-xs text-[#008db8] dark:text-[#00B9F1] font-mono font-black">₹5,400</span>
+                    <span>Dispute: Indresh Suresh (Held Refund)</span>
+                    <span className="text-xs text-[#008db8] dark:text-[#00B9F1] font-mono font-black">₹1,500</span>
                   </div>
                   <p className="text-[11px] text-neutral-600 dark:text-neutral-400 mt-0.5 font-medium">
-                    TXN-9941 dispute. Invoice & CCTV ready. Submit contest to bank?
+                    Refund deducted from merchant ledger but stuck in gateway. Dispatch formal dispute packet?
                   </p>
                 </div>
               </div>
@@ -275,12 +304,12 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
               {approvedChargeback === 'approved' ? (
                 <div className="mt-2.5 p-2 rounded-lg bg-[#00B9F1]/15 text-black dark:bg-white dark:text-black text-xs font-black flex items-center gap-1.5 border border-[#00B9F1]">
                   <CheckCircle2 className="w-4 h-4 text-[#008db8] dark:text-black" />
-                  <span>Approved! Dispute packet dispatched to bank.</span>
+                  <span>Approved! Dispute packet dispatched to settlement gateway.</span>
                 </div>
               ) : approvedChargeback === 'rejected' ? (
                 <div className="mt-2.5 p-2 rounded-lg bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white text-xs font-black flex items-center gap-1.5">
                   <X className="w-4 h-4 text-red-500" />
-                  <span>Dispute rejected. Amount credited to customer.</span>
+                  <span>Dispute rejected by merchant.</span>
                 </div>
               ) : (
                 <div className="mt-2.5 flex items-center gap-2">
@@ -294,7 +323,7 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
                     className="flex-1 py-1.5 px-3 rounded-lg electric-glow-btn text-black font-black text-xs flex items-center justify-center gap-1 active:scale-95"
                   >
                     <Check className="w-3.5 h-3.5 stroke-[3]" />
-                    <span>Approve Dispute (₹5,400)</span>
+                    <span>Approve Claim (₹1,500)</span>
                   </button>
 
                   <button
@@ -307,11 +336,11 @@ export default function MorningCheckSimulator({ theme, isRunning, onRunCheck, on
               )}
             </div>
 
-            {/* 2 Auto-Handled Actions summary */}
+            {/* Auto-Handled Actions summary */}
             <div className="mt-2 flex items-center justify-between text-[10px] text-neutral-500 font-bold px-1">
               <span className="flex items-center gap-1 text-[#00B9F1]">
                 <CheckCircle2 className="w-3 h-3" />
-                2 Tasks auto-executed (₹2,140)
+                ₹640 Auto-claim submitted
               </span>
               <span className="font-mono text-neutral-400">n8n #EX-9921</span>
             </div>

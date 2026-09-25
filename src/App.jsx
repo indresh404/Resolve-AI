@@ -38,10 +38,6 @@ export default function App() {
 
   const handleRunMorningCheck = () => {
     setIsMorningCheckRunning(true);
-  };
-
-  const handleLoaderComplete = () => {
-    setIsMorningCheckRunning(false);
     setActiveTab('morning-check');
     const morningSection = document.getElementById('morning-check');
     if (morningSection) {
@@ -49,8 +45,11 @@ export default function App() {
     }
   };
 
+  const [voiceDemoKey, setVoiceDemoKey] = useState(0);
+
   const handleOpenVoice = () => {
     setActiveTab('voice');
+    setVoiceDemoKey(prev => prev + 1);
     const voiceSection = document.getElementById('voice');
     if (voiceSection) {
       voiceSection.scrollIntoView({ behavior: 'smooth' });
@@ -60,13 +59,6 @@ export default function App() {
   return (
     <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex flex-col selection:bg-[#00B9F1]/30 selection:text-black dark:selection:text-white transition-colors duration-200">
       
-      {/* Centered Thinking Orb 3-5s Loading Experience with Deep Backdrop Blur */}
-      <LiveThinkingOrbLoader 
-        isOpen={isMorningCheckRunning}
-        onComplete={handleLoaderComplete}
-        theme={theme}
-      />
-
       {/* Capsule Glassmorphism Navbar */}
       <Navbar
         onRunMorningCheck={handleRunMorningCheck}
@@ -81,7 +73,7 @@ export default function App() {
       {/* Main Single-Page App Content */}
       <main className="flex-1 space-y-6 pt-4 pb-12">
         
-        {/* Hero Section with Live Thinking Orb Playground */}
+        {/* Hero Section with Quick Demo Launch */}
         <HeroSection 
           theme={theme}
           onRunMorningCheck={handleRunMorningCheck}
@@ -100,7 +92,7 @@ export default function App() {
           }}
         />
 
-        {/* Proactive 9:00 AM Daily Morning Check Simulation */}
+        {/* Step 1: Proactive 9:00 AM Daily Morning Check Simulation */}
         <MorningCheckSimulator 
           theme={theme}
           isRunning={isMorningCheckRunning} 
@@ -108,28 +100,29 @@ export default function App() {
           onOpenSoundboxChime={() => setIsSoundboxModalOpen(true)}
         />
 
-        {/* Settlement Reconciliation Math Engine (₹2,340 Gap & Recovery Lifecycle) */}
+        {/* Step 2: Sarvam AI Multilingual Voice Copilot (Automatic Hindi Demo) */}
+        <VoiceAssistant 
+          theme={theme}
+          triggerDemoCount={voiceDemoKey}
+          onOpenSoundboxChime={() => setIsSoundboxModalOpen(true)}
+        />
+
+        {/* Step 3: Settlement Reconciliation Math Engine (₹2,340 Gap & Recovery Lifecycle) */}
         <SettlementBreakdown 
           theme={theme}
           onOpenDisputeModal={() => setIsSoundboxModalOpen(true)}
         />
 
-        {/* Guardrails & Human-in-the-Loop Risk Scorer (🟢 / 🟡 / 🔴) */}
+        {/* Step 4: Guardrails & Human-in-the-Loop Risk Scorer (🟢 / 🟡 / 🔴) */}
         <GuardrailsApproval 
           theme={theme}
           onOpenWhatsAppModal={() => setIsWhatsAppModalOpen(true)}
         />
 
-        {/* Multi-Agent Orchestration & n8n Pipeline */}
+        {/* Step 5: Multi-Agent Orchestration & n8n Pipeline */}
         <MultiAgentPipeline theme={theme} />
 
-        {/* Sarvam AI Multilingual Voice Copilot */}
-        <VoiceAssistant 
-          theme={theme}
-          onOpenSoundboxChime={() => setIsSoundboxModalOpen(true)}
-        />
-
-        {/* Cognee Knowledge Graph & Persistent Memory */}
+        {/* Step 6: Cognee Knowledge Graph & Persistent Memory */}
         <CogneeMemoryGraph theme={theme} />
 
       </main>

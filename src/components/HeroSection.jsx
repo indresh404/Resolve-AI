@@ -74,7 +74,7 @@ export default function HeroSection({ theme, onRunMorningCheck, onOpenVoiceModal
               className="px-4 py-2.5 rounded-xl bg-white hover:bg-neutral-100 text-black dark:bg-white dark:text-black dark:hover:bg-neutral-200 font-bold text-sm transition-all flex items-center gap-2 border-2 border-neutral-300 dark:border-white shadow-sm active:scale-95"
             >
               <Radio className="w-4 h-4 text-[#008db8] dark:text-[#00B9F1] animate-pulse" />
-              <span>Merchant Soundbox 4G Voice Engine</span>
+              <span>Voice Copilot (Hindi Demo)</span>
             </button>
           </div>
 

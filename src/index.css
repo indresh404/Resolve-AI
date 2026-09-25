@@ -169,12 +169,50 @@ html.dark .bw-inset {
   }
 }
 
+@keyframes loaderCircleFast {
+  0% {
+    transform: rotate(90deg) scale(1);
+    box-shadow:
+      0 8px 20px 0 #00B9F1 inset,
+      0 16px 28px 0 #005dff inset,
+      0 40px 48px 0 #1e40af inset,
+      0 0 8px 3px rgba(0, 185, 241, 0.7),
+      0 0 16px 4px rgba(0, 93, 255, 0.5);
+  }
+  50% {
+    transform: rotate(270deg) scale(1.04);
+    box-shadow:
+      0 8px 20px 0 #38D4FF inset,
+      0 16px 14px 0 #0284c7 inset,
+      0 32px 48px 0 #00B9F1 inset,
+      0 0 10px 4px rgba(56, 212, 255, 0.8),
+      0 0 20px 6px rgba(0, 185, 241, 0.6);
+  }
+  100% {
+    transform: rotate(450deg) scale(1);
+    box-shadow:
+      0 8px 20px 0 #00B9F1 inset,
+      0 16px 28px 0 #005dff inset,
+      0 40px 48px 0 #1e40af inset,
+      0 0 8px 3px rgba(0, 185, 241, 0.7),
+      0 0 16px 4px rgba(0, 93, 255, 0.5);
+  }
+}
+
 .animate-loaderCircle {
   animation: loaderCircle 4s linear infinite;
 }
 
+.animate-loaderCircleFast {
+  animation: loaderCircleFast 1.3s linear infinite;
+}
+
 .animate-loaderLetter {
   animation: loaderLetter 2.4s infinite;
+}
+
+.animate-loaderLetterFast {
+  animation: loaderLetter 1.2s infinite;
 }
 
 @keyframes rotate-loader {

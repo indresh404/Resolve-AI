@@ -22,7 +22,7 @@ export default function CogneeMemoryGraph({ theme }) {
           <div>
             <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#00B9F1]/15 text-[#007da8] dark:bg-[#00B9F1]/20 dark:text-[#00B9F1] text-xs font-black uppercase tracking-wider mb-1.5 border border-[#00B9F1]/30">
               <Brain className="w-3.5 h-3.5 text-[#008db8] dark:text-[#00B9F1]" />
-              Graph Memory
+              Demo Step 06: Cognee Memory & Graph
             </div>
             <h2 className="text-2xl font-black text-black dark:text-white">
               Customer Pattern & Fraud Graph

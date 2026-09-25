@@ -76,7 +76,7 @@ export default function InteractiveDemoTour({
         scrollToStep('guardrails');
         break;
       case 5:
-        onOpenSoundbox();
+        scrollToStep('agents');
         break;
       case 6:
         scrollToStep('memory');
